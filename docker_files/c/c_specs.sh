@@ -240,7 +240,10 @@ ulimit -f $fsize
 trap 'catch $? $attempt_id' EXIT
 
 echo "Running Static analisys"
-cppcheck --enable=all --check-config /disco/submissions/$attempt/ > /disco/submission_results/$attempt/static.out
+cppcheck --enable=all --suppress=missingIncludeSystem . 2> /disco/submission_results/$attempt/static.out
+
+#cppcheck --enable=all --quiet *.c > /disco/submission_results/$attempt/static.out
+
 
 if [ "$test" == "0" ]; then # Run compilation
   compile.sh $attempt "$compile_flags" "$linkage_flags"
