@@ -795,7 +795,9 @@ def get_docker_env_vars(attempt_id, test_id, contest_id, run_args, specification
     return string
 
 def run_test_in_docker(test_id, attempt_id):
-    data_path = settings.LOCAL_STATIC_CDN_PATH
+    data_path = settings.DOCKER_CDN_PATH
+    local_data_path = settings.LOCAL_STATIC_CDN_PATH
+    
     attempt = Attempt.getByID(attempt_id)
     contest = attempt.getContest()
     specifications = contest.getSpecifications()
@@ -816,10 +818,10 @@ def run_test_in_docker(test_id, attempt_id):
             docker_command = f'docker run --name atempt{attempt_id} --rm -i -d '
             docker_command += f'--cpus={specifications.getAttribute("cpu")} '
             docker_command += f'--memory={specifications.getAttribute("mem")}m '
-            docker_command += f'-v {data_path}/:/disco {image} '
+            docker_command += f'-v {data_path}:/disco {image} '
             docker_command += f'sleep 600'
             print(docker_command)
-            exec_command(docker_command, data_path)
+            exec_command(docker_command, local_data_path)
         """
         docker_command = f'docker exec -i atempt{attempt_id} {script} '
         docker_command += f'--timeout {specifications.getAttribute("timeout")} --attempt {attempt_id} --test {test_id} '
@@ -830,8 +832,8 @@ def run_test_in_docker(test_id, attempt_id):
         """
         docker_command = f'docker exec -i atempt{attempt_id} {script}'
         docker_command += get_docker_env_vars(attempt_id, test_id, contest.id, run_args, specifications)
-        exec_command(docker_command, data_path)
         print(docker_command)
+        exec_command(docker_command, local_data_path)
     else:
         print("No specifications for ")
         print(attempt)

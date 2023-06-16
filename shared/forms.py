@@ -324,7 +324,8 @@ class TeamModelForm(forms.ModelForm):
         if team:
             self.add_error('join_code', 'The code you entered is already in use by other team.')
             return False
-        team = self.save(commit=False)
+        
+        team = Team.objects.create(name = self.data['name'], join_code=self.data['join_code'], contest = contest, created_by = user)
         team.contest = contest
         team.save()
         team.users.add(user)

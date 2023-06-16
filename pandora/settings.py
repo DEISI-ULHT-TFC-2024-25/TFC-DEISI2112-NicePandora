@@ -14,10 +14,10 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
+# try:
+#     from .local_settings import *
+# except ImportError:
+#     pass
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -130,6 +130,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOCAL_STATIC_CDN_PATH = os.path.join(os.path.dirname(BASE_DIR), 'data')
+DOCKER_CDN_PATH = '/Users/pserra/Documents/Pandora/data'
+
 
 STATIC_ROOT = os.path.join(LOCAL_STATIC_CDN_PATH, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
@@ -189,3 +191,79 @@ BASE_USR_PATH = ''
 
 
 ENABLE_USER_REGISTRATION = True
+
+
+# try:
+#     from .local_settings import *
+# except ImportError:
+#     pass
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
+#     }
+# }
+
+
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-6hdy-)5o6k6it_6x%s#u0#guc3(au!=v%%qb674(upu6rrht7b"
+)
+
+DEBUG = os.environ.get("DEBUG", True)
+
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0"]
+
+if os.environ.get("ALLOWED_HOSTS") is not None:
+    try:
+        ALLOWED_HOSTS += os.environ.get("ALLOWED_HOSTS").split(",")
+    except Exception as e:
+        print("Cant set ALLOWED_HOSTS, using default instead")
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
+    }
+}
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+
+
+
+
+#
+# rest of the code ...
+#
+
+# set database, it can be set to SQLite or Postgres
+
+#DB_SQLITE = "sqlite"
+#DB_POSTGRESQL = "postgresql"
+
+# DATABASES_ALL = {
+#     DB_SQLITE: {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     },
+#     DB_POSTGRESQL: {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+#         "NAME": os.environ.get("POSTGRES_NAME", "postgres"),
+#         "USER": os.environ.get("POSTGRES_USER", "postgres"),
+#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+#         "PORT": int(os.environ.get("POSTGRES_PORT", "5432")),
+#     },
+# }
+
+#DATABASES = {"default": DATABASES_ALL[os.environ.get("DJANGO_DB", DB_SQLITE)]}
+
+
