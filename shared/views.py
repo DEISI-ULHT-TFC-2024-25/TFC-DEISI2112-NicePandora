@@ -19,14 +19,14 @@ class LoginException(BaseException):
         return self.message
 
 
-def autenticate(email, password):
-    if not email:
-        raise LoginException('You did not provide an email!')
+def autenticate(username, password):
+    if not username:
+        raise LoginException('You did not provide the username!')
     if not password:
         raise LoginException('You did not provide a password!')
-    user = auth.authenticate(username=email, password=password)
+    user = auth.authenticate(username=username, password=password)
     if user is None:
-        raise LoginException('Email and/or password are incorrect.')
+        raise LoginException('Username and/or password are incorrect.')
 
     # if not user.check_password(password):
     #    raise LoginException('Incorrect password for this user\'s email!')
@@ -38,7 +38,7 @@ def login_view(request):
     context = {}
     if request.POST:
         try:
-            user = autenticate(request.POST['email'], request.POST['password'])
+            user = autenticate(request.POST['username'], request.POST['password'])
             auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect("user_dashboard")
         except LoginException as error:
