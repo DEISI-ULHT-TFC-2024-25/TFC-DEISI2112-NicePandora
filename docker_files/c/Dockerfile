@@ -3,10 +3,13 @@ FROM gcc:latest
 #RUN apt-get update && apt-get install -y build-essential
 #clang-format clang-tidy clang-tools clang libclang-dev
 COPY time /usr/bin/time
-COPY ascii /usr/bin/ascii
+
+COPY ascii.c /
+RUN gcc /ascii.c -o /usr/bin/ascii
+
 COPY c_specs.sh /usr/src/c_specs.sh
 COPY c_specs.sh /usr/bin/c_specs.sh
-COPY ascii /usr/bin/ascii
+#COPY ascii /usr/bin/ascii
 COPY compile.sh /usr/bin/compile.sh
 COPY run.sh /usr/bin/run.sh
 RUN mkdir /usr/src/compiled/
