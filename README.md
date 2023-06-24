@@ -157,3 +157,29 @@ Clicar em users
 Editar o user  
 Completar a ultima secção, e selecionar 'valid'  
 Submeter  
+
+
+
+# Arranque com a versão dockerized
+
+1. Instalar o docker e o docker-compose
+
+2. Arranque:
+```bash
+docker-compose up -d --remove-orphans
+```
+
+3. Build da imagem do docker de execução
+```bash
+cd docker_files/c/
+sh build_docker.sh
+```
+
+
+4. Aceder a https://127.0.0.1:8010/
+user: admin, password: admin
+
+
+5. Aceder a https://127.0.0.1:8010/admin
+
+6. Aceder a https://127.0.0.1:8010/admin-django
