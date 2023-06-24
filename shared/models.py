@@ -748,7 +748,7 @@ class Attempt(models.Model):
         progress_recorder.set_progress(total_steps - 1, total_steps, "Almost there...")
         # create file that kills the container
         #open(os.path.join(attempt_path, 'status.info'), 'a').close()
-        exec_command(f'docker kill atempt{self.id}', data_path)
+        #exec_command(f'docker kill atempt{self.id}', data_path)
 
         exec_command("rm -rf ./tmp/" + str(self.id) + "/", data_path)
         # Save

@@ -2,10 +2,19 @@ FROM gcc:latest
 #FROM ubuntu:latest
 #RUN apt-get update && apt-get install -y build-essential
 #clang-format clang-tidy clang-tools clang libclang-dev
-COPY time /usr/bin/time
+#COPY time /usr/bin/time
 
 COPY ascii.c /
 RUN gcc /ascii.c -o /usr/bin/ascii
+
+COPY get_duration.c /
+COPY get_exit_code.c /
+RUN gcc /get_duration.c -o /usr/bin/get_duration
+RUN gcc /get_exit_code.c -o /usr/bin/get_exit_code
+
+COPY memusage.sh /usr/bin/memusage.sh
+RUN chmod +x /usr/bin/memusage.sh
+
 
 COPY c_specs.sh /usr/src/c_specs.sh
 COPY c_specs.sh /usr/bin/c_specs.sh
@@ -16,10 +25,11 @@ RUN mkdir /usr/src/compiled/
 RUN apt-get update -y && apt install cppcheck -y
 RUN apt-get install -y valgrind
 
-RUN apt-get update && apt-get install -y clang-format clang-tidy clang-tools clang libclang-dev llvm libc++-dev
+RUN apt-get update && apt-get install -y time clang-format clang-tidy clang-tools clang libclang-dev llvm libc++-dev
 RUN mkdir /app
 # Copy the source code files to the container
 COPY detect_global_variables.cpp /app
+
 # Set the working directory
 WORKDIR /app
 # Compile the program using LLVM

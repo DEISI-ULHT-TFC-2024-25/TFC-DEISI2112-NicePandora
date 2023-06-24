@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+until cd /app
+do
+    echo "Waiting for server volume..."
+done
+
+pwd
+
+ls
+
+
+until python3 manage.py makemigrations
+do
+    echo "Waiting for db to be ready..."
+    sleep 2
+done
+
+
+until python3 manage.py makemigrations shared
+do
+    echo "Waiting for db to be ready..."
+    sleep 2
+done
+
+until python3 manage.py makemigrations api
+do
+    echo "Waiting for db to be ready..."
+    sleep 2
+done
+
+until python3 manage.py migrate
+do
+    echo "Waiting for db to be ready..."
+    sleep 2
+done
+echo "migrate done"
+
+
+until python3 manage.py collectstatic --noinput
+do
+    echo "Waiting for collecstatic to be ready..."
+    sleep 2
+done
+
+python3 manage.py runserver 0.0.0.0:8000

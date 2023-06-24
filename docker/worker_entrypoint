@@ -1,0 +1,20 @@
+#!/bin/sh
+set -o errexit
+set -o nounset
+
+
+
+
+until cd /app
+do
+    echo "Waiting for server volume..."
+done
+
+pwd
+
+ls
+
+# run a worker :)
+celery -A pandora worker --loglevel=info --concurrency 3 -E --time-limit=3000
+
+

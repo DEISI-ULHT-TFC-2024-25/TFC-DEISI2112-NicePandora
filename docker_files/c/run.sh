@@ -18,14 +18,17 @@ fi
 #/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time timeout $3 ./program $4 < /disco/tests/$2/test.in > /disco/submission_results/$1/$2.out
 #/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time timeout $3 ./program $4 < /disco/tests/$2/test.in | ascii >> /disco/submission_results/$1/$2.out
 
-/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time timeout $3 ./program $4 < /disco/tests/$2/test.in | ascii > /disco/submission_results/$1/$2.out
+#/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time timeout $3 ./program $4 < /disco/tests/$2/test.in | ascii > /disco/submission_results/$1/$2.out
 
 #cenas do daniel que estoiram com unicodedecode error
-#/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time timeout $3 script -q -c "nice -n0 ./program $4 < /disco/tests/$2/test.in" -f /disco/submission_results/$1/$2.out.tmp
-#/bin/cat /disco/submission_results/$1/$2.out.tmp | /usr/bin/ascii > /disco/submission_results/$1/$2.out
-#/bin/sed -i '1d;$d' /disco/submission_results/$1/$2.out
 
+/usr/bin/time --quiet -f "%U %K %p %e %M %x" -o /disco/submission_results/$1/$2.time script -q -T t.t -f -O out.tmp -o 500KiB -e -m advanced -E never -c "./program < /disco/tests/$2/test.in" | ascii
+/bin/cat out.tmp | /usr/bin/ascii > /disco/submission_results/$1/$2.out
+/bin/sed -i '1d;$d' /disco/submission_results/$1/$2.out
+exitcode=$(get_exit_code t.t)
+get_duration t.t > /disco/submission_results/$1/$2.duration
+echo $exitcode > /disco/submission_results/$1/$2.exitcode
 
 #status=${PIPESTATUS[0]}
-exitcode=$(grep -Eo '[0-9]+$' /disco/submission_results/$1/$2.time | head -1)
+#exitcode=$(grep -Eo '[0-9]+$' /disco/submission_results/$1/$2.time | head -1)
 exit $exitcode
