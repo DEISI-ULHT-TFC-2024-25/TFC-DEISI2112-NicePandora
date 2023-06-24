@@ -43,6 +43,20 @@ do
     sleep 2
 done
 
+mkdir -p ../data/tests
+until rsync ./static/tests ../data/tests
+do
+    echo "Waiting moving tests"
+    sleep 2
+done
+rm ../data/static/tests
+
+until python3 manage.py loaddata static/initial_data.json
+do
+    echo "Waiting for loading initial data"
+    sleep 2
+done
+
 # python manage.py createsuperuser --noinput
 
 #gunicorn pandora.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4

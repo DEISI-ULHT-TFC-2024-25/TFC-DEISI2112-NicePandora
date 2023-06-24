@@ -1,0 +1,813 @@
+[
+{
+  "model": "shared.contest",
+  "pk": 1,
+  "fields": {
+    "title": "Example Cifrex",
+    "short_name": "cifrex",
+    "description": "",
+    "sow": "",
+    "reference_code": "",
+    "start_date": "2023-06-23T21:51:15Z",
+    "end_date": "2026-06-24T21:51:17Z",
+    "min_team_members": 1,
+    "max_team_members": 2,
+    "max_classification": 20,
+    "visible": true,
+    "automatic_weight": true,
+    "max_submitions": 0,
+    "language": "C",
+    "archived": false
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 1,
+  "fields": {
+    "name": "cifrex_test_38",
+    "contest": 1,
+    "input_file": "tests/1/test.in",
+    "output_file": "tests/1/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 2,
+  "fields": {
+    "name": "cifrex_test_26",
+    "contest": 1,
+    "input_file": "tests/2/test.in",
+    "output_file": "tests/2/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 3,
+  "fields": {
+    "name": "cifrex_test_27",
+    "contest": 1,
+    "input_file": "tests/3/test.in",
+    "output_file": "tests/3/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 4,
+  "fields": {
+    "name": "cifrex_test_28",
+    "contest": 1,
+    "input_file": "tests/4/test.in",
+    "output_file": "tests/4/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 5,
+  "fields": {
+    "name": "cifrex_test_29",
+    "contest": 1,
+    "input_file": "tests/5/test.in",
+    "output_file": "tests/5/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 6,
+  "fields": {
+    "name": "cifrex_test_20",
+    "contest": 1,
+    "input_file": "tests/6/test.in",
+    "output_file": "tests/6/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 7,
+  "fields": {
+    "name": "cifrex_test_21",
+    "contest": 1,
+    "input_file": "tests/7/test.in",
+    "output_file": "tests/7/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 8,
+  "fields": {
+    "name": "cifrex_test_22",
+    "contest": 1,
+    "input_file": "tests/8/test.in",
+    "output_file": "tests/8/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 9,
+  "fields": {
+    "name": "cifrex_test_23",
+    "contest": 1,
+    "input_file": "tests/9/test.in",
+    "output_file": "tests/9/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 10,
+  "fields": {
+    "name": "cifrex_test_0",
+    "contest": 1,
+    "input_file": "tests/10/test.in",
+    "output_file": "tests/10/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 11,
+  "fields": {
+    "name": "cifrex_test_1",
+    "contest": 1,
+    "input_file": "tests/11/test.in",
+    "output_file": "tests/11/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": false,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 12,
+  "fields": {
+    "name": "cifrex_test_30",
+    "contest": 1,
+    "input_file": "tests/12/test.in",
+    "output_file": "tests/12/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 13,
+  "fields": {
+    "name": "cifrex_test_10",
+    "contest": 1,
+    "input_file": "tests/13/test.in",
+    "output_file": "tests/13/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 14,
+  "fields": {
+    "name": "cifrex_test_13",
+    "contest": 1,
+    "input_file": "tests/14/test.in",
+    "output_file": "tests/14/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": false,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 15,
+  "fields": {
+    "name": "cifrex_test_41",
+    "contest": 1,
+    "input_file": "tests/15/test.in",
+    "output_file": "tests/15/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": false,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 16,
+  "fields": {
+    "name": "cifrex_test_31",
+    "contest": 1,
+    "input_file": "tests/16/test.in",
+    "output_file": "tests/16/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": false,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 17,
+  "fields": {
+    "name": "cifrex_test_14",
+    "contest": 1,
+    "input_file": "tests/17/test.in",
+    "output_file": "tests/17/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 18,
+  "fields": {
+    "name": "cifrex_test_15",
+    "contest": 1,
+    "input_file": "tests/18/test.in",
+    "output_file": "tests/18/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 19,
+  "fields": {
+    "name": "cifrex_test_16",
+    "contest": 1,
+    "input_file": "tests/19/test.in",
+    "output_file": "tests/19/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 20,
+  "fields": {
+    "name": "cifrex_test_8",
+    "contest": 1,
+    "input_file": "tests/20/test.in",
+    "output_file": "tests/20/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 21,
+  "fields": {
+    "name": "cifrex_test_42",
+    "contest": 1,
+    "input_file": "tests/21/test.in",
+    "output_file": "tests/21/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": false,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 22,
+  "fields": {
+    "name": "cifrex_test_34",
+    "contest": 1,
+    "input_file": "tests/22/test.in",
+    "output_file": "tests/22/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 23,
+  "fields": {
+    "name": "cifrex_test_18",
+    "contest": 1,
+    "input_file": "tests/23/test.in",
+    "output_file": "tests/23/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 24,
+  "fields": {
+    "name": "cifrex_test_19",
+    "contest": 1,
+    "input_file": "tests/24/test.in",
+    "output_file": "tests/24/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 25,
+  "fields": {
+    "name": "cifrex_test_39",
+    "contest": 1,
+    "input_file": "tests/25/test.in",
+    "output_file": "tests/25/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 26,
+  "fields": {
+    "name": "cifrex_test_4",
+    "contest": 1,
+    "input_file": "tests/26/test.in",
+    "output_file": "tests/26/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 27,
+  "fields": {
+    "name": "cifrex_test_36",
+    "contest": 1,
+    "input_file": "tests/27/test.in",
+    "output_file": "tests/27/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 28,
+  "fields": {
+    "name": "cifrex_test_37",
+    "contest": 1,
+    "input_file": "tests/28/test.in",
+    "output_file": "tests/28/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 29,
+  "fields": {
+    "name": "cifrex_test_6",
+    "contest": 1,
+    "input_file": "tests/29/test.in",
+    "output_file": "tests/29/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 30,
+  "fields": {
+    "name": "cifrex_test_7",
+    "contest": 1,
+    "input_file": "tests/30/test.in",
+    "output_file": "tests/30/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": false,
+    "view_args": false,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 31,
+  "fields": {
+    "name": "cifrex_test_40",
+    "contest": 1,
+    "input_file": "tests/31/test.in",
+    "output_file": "tests/31/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": false,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 32,
+  "fields": {
+    "name": "cifrex_test_32",
+    "contest": 1,
+    "input_file": "tests/32/test.in",
+    "output_file": "tests/32/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 33,
+  "fields": {
+    "name": "cifrex_test_33",
+    "contest": 1,
+    "input_file": "tests/33/test.in",
+    "output_file": "tests/33/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 34,
+  "fields": {
+    "name": "cifrex_test_17",
+    "contest": 1,
+    "input_file": "tests/34/test.in",
+    "output_file": "tests/34/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 35,
+  "fields": {
+    "name": "cifrex_test_12",
+    "contest": 1,
+    "input_file": "tests/35/test.in",
+    "output_file": "tests/35/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": false,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 36,
+  "fields": {
+    "name": "cifrex_test_35",
+    "contest": 1,
+    "input_file": "tests/36/test.in",
+    "output_file": "tests/36/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 37,
+  "fields": {
+    "name": "cifrex_test_2",
+    "contest": 1,
+    "input_file": "tests/37/test.in",
+    "output_file": "tests/37/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 38,
+  "fields": {
+    "name": "cifrex_test_5",
+    "contest": 1,
+    "input_file": "tests/38/test.in",
+    "output_file": "tests/38/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": false,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 39,
+  "fields": {
+    "name": "cifrex_test_9",
+    "contest": 1,
+    "input_file": "tests/39/test.in",
+    "output_file": "tests/39/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 40,
+  "fields": {
+    "name": "cifrex_test_25",
+    "contest": 1,
+    "input_file": "tests/40/test.in",
+    "output_file": "tests/40/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 41,
+  "fields": {
+    "name": "cifrex_test_3",
+    "contest": 1,
+    "input_file": "tests/41/test.in",
+    "output_file": "tests/41/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 42,
+  "fields": {
+    "name": "cifrex_test_24",
+    "contest": 1,
+    "input_file": "tests/42/test.in",
+    "output_file": "tests/42/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.test",
+  "pk": 43,
+  "fields": {
+    "name": "cifrex_test_11",
+    "contest": 1,
+    "input_file": "tests/43/test.in",
+    "output_file": "tests/43/test.out",
+    "mandatory": false,
+    "weight_pct": "2.33",
+    "run_arguments": "",
+    "view_diff": true,
+    "view_input": true,
+    "view_args": true,
+    "view_error": true
+  }
+},
+{
+  "model": "shared.c_specification",
+  "pk": 1,
+  "fields": {
+    "cpu": 1,
+    "mem": 50,
+    "run_arguments": null,
+    "timeout": 10,
+    "contest": 1,
+    "test": null,
+    "compile_flags": "-Wall",
+    "linkage_flags": "-lc",
+    "fsize": 8192,
+    "check_leak": false
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$150000$yIPTMVwNscGf$Hu9LW1cBE5h7R+xlINe2uilX2QfPh/eU7I9YtMriWRk=",
+    "last_login": "2023-06-24T18:10:48Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "admin",
+    "last_name": "admin",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2023-06-24T18:10:42Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "shared.profile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "number": 12345,
+    "gprd": true,
+    "valid": true
+  }
+},
+{
+  "model": "shared.group",
+  "pk": 1,
+  "fields": {
+    "name": "Example",
+    "join_code": "ff50f448-0bbd-11ee-be56-0242ac120002",
+    "registration_open": false,
+    "users": [
+      1
+    ],
+    "contests": [
+      1
+    ]
+  }
+}
+]
