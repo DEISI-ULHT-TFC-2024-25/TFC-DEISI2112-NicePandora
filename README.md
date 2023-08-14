@@ -6,9 +6,10 @@ Alexandre Brigolas, 21803430
 Ricardo Nunes, 21805213  
 
 Orientador: Prof. Dr. Pedro Arroz Serra
+
 ## Instalação
 A instalação deve ser realizada num sistema Linux.
-
+Dependente das permissoes das VMs, pode ser necessario fazer sudo de algumas instrucões em baixo
 
 ### Instalar Dependências
 ```
@@ -161,13 +162,14 @@ Submeter
 
 
 # Arranque com a versão dockerized
-
+# AVISO: em certas pode VMs pode requerer sudo
 1. Instalar o docker e o docker-compose
 
 2. Arranque:
 ```bash
 docker-compose up -d --remove-orphans
 ```
+ls
 
 3. Build da imagem do docker de execução
 ```bash
@@ -175,11 +177,11 @@ cd docker_files/c/
 sh build_docker.sh
 ```
 
-
-4. Aceder a https://127.0.0.1:8010/
+#Os links em baixo Em certos casos funciona com https
+4. Aceder a http://127.0.0.1:8010/
 user: admin, password: admin
 
 
-5. Aceder a https://127.0.0.1:8010/admin
+5. Aceder a http://127.0.0.1:8010/admin
 
-6. Aceder a https://127.0.0.1:8010/admin-django
+6. Aceder a http://127.0.0.1:8010/admin-django
