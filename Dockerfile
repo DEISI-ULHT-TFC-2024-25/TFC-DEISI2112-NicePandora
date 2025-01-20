@@ -1,42 +1,29 @@
-FROM --platform=linux/amd64 ubuntu:focal
+FROM python:3.10-slim
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+	redis-tools \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN cat etc/os-release
+	
 
-RUN apt update
-RUN apt install -y apt-transport-https ca-certificates curl gnupg lsb-release dpkg
+# Set the working directory
+WORKDIR /app
 
-RUN lsb_release -cs
-RUN dpkg --print-architecture
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install pip==23.0.1 && pip install -r requirements.txt
 
-RUN apt install -y python3 python3-pip docker.io 
+#RUN pip install --upgrade pip && pip install -r requirements.txt
 
-  # dependencies for building Python packages
-RUN apt install -y libpq-dev
+# Copy the application code
+COPY . .
 
-RUN python3 --version
-
-WORKDIR /
-
-#COPY ./app /app
-#COPY ./docker /docker
-#COPY ./.env/ /.env
-
-COPY ./requirements.txt /requirements.txt
-COPY ./docker/entrypoint /entrypoint
+# Copy the start script and ensure it is executable
 COPY ./docker/start /start
-COPY ./docker/worker_entrypoint /worker_entrypoint
+RUN chmod +x /start
 
-#WORKDIR /app
-
-
-RUN pip install --upgrade pip
-RUN pip install gunicorn
-RUN pip install -r requirements.txt
-
-
-RUN chmod 755 /entrypoint
-RUN chmod 755 /worker_entrypoint
-RUN chmod 755 /start
-
-ENTRYPOINT ["/entrypoint"]
+# Define the default command
+ENTRYPOINT ["/start"]

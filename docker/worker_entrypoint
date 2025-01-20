@@ -2,19 +2,10 @@
 set -o errexit
 set -o nounset
 
-
-
-
-until cd /app
-do
-    echo "Waiting for server volume..."
+until pg_isready -h db -p 5432 -U hello_django; do
+  echo "Waiting for PostgreSQL to be ready..."
+  sleep 2
 done
 
-pwd
-
-ls
-
-# run a worker :)
-celery -A pandora worker --loglevel=info --concurrency 3 -E --time-limit=3000
-
-
+echo "PostgreSQL is ready!"
+celery -A pandora worker --loglevel=info --concurrency=3 -E --time-limit=3000

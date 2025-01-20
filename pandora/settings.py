@@ -14,10 +14,10 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-# try:
-#     from .local_settings import *
-# except ImportError:
-#     pass
+#try:
+#    from .local_settings import *
+#except ImportError:
+#    pass
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -151,6 +151,10 @@ VALGRIND_EXEC = '/usr/bin/valgrind --error-exitcode=77 --leak-check=full -q'
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
+BROKER_URL = 'redis://redis:6379/0'  # Redis container service name
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+
 # Celery Configuration Options
 CELERY_TIMEZONE = "Europe/Lisbon"
 CELERY_TASK_TRACK_STARTED = True
@@ -214,7 +218,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", True)
 
-ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "localhost"]
 
 if os.environ.get("ALLOWED_HOSTS") is not None:
     try:
@@ -237,7 +241,22 @@ DATABASES = {
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
 
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://redis:6379/0")
 
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "hello_django"),
+        "USER": os.environ.get("POSTGRES_USER", "hello_django"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "hello_django"),
+        "HOST": os.environ.get("POSTGRES_HOST", "db"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+    }
+}
 
 
 #
@@ -265,5 +284,3 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379
 # }
 
 #DATABASES = {"default": DATABASES_ALL[os.environ.get("DJANGO_DB", DB_SQLITE)]}
-
-

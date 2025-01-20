@@ -5,6 +5,11 @@
 #    echo "Waiting for server volume..."
 #done
 
+until pg_isready -h db -p 5432 -U hello_django; do
+  echo "Waiting for PostgreSQL to be ready..."
+  sleep 2
+done
+echo "PostgreSQL is ready!"
 
 until python3 manage.py makemigrations
 do
