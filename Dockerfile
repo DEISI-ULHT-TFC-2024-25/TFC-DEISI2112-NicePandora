@@ -25,5 +25,9 @@ COPY . .
 COPY ./docker/start /start
 RUN chmod +x /start
 
+COPY ./docker/worker_entrypoint /worker_entrypoint
+RUN chmod +x /worker_entrypoint
+
+
 # Define the default command
 ENTRYPOINT ["/start"]

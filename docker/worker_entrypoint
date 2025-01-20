@@ -2,10 +2,12 @@
 set -o errexit
 set -o nounset
 
-until pg_isready -h db -p 5432 -U hello_django; do
-  echo "Waiting for PostgreSQL to be ready..."
-  sleep 2
-done
+#until pg_isready -h db -p 5432 -U hello_django; do
+#  echo "Waiting for PostgreSQL to be ready..."
+#  sleep 2
+#done
 
-echo "PostgreSQL is ready!"
-celery -A pandora worker --loglevel=info --concurrency=3 -E --time-limit=3000
+echo "------>CELERY HERE, PostgreSQL is ready!"
+#celery -A pandora worker --loglevel=info --concurrency=3 -E --time-limit=3000
+
+celery -A pandora worker --loglevel=info --queues=celery --concurrency=3 -E --time-limit=3000

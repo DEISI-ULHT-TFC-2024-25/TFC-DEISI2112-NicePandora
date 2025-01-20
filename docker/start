@@ -40,6 +40,11 @@ do
 done
 echo "migrate done"
 
+until python manage.py loaddata ./static/initial_data.json
+do
+    echo "Waiting for database to be ready for data..."
+    sleep 2
+done
 
 until python3 manage.py collectstatic --noinput
 do

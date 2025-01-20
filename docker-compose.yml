@@ -30,7 +30,7 @@ services:
   celery_worker:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_celery
     image: django_celery_example_celery_worker
     command: /worker_entrypoint
     volumes:
@@ -42,6 +42,10 @@ services:
     depends_on:
       - redis
       - db
+    environment:
+      - POSTGRES_DB=hello_django
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
 
 volumes:
   postgres_data:
