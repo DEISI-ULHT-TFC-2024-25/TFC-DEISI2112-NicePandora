@@ -797,101 +797,60 @@ def get_docker_env_vars(attempt_id, test_id, contest_id, run_args, specification
 	string += ' '
 	return string
 
+
+def create_docker_container(attempt_id, specifications, image):
+	"""
+	Creates a Docker container for the given attempt.
+	"""
+	docker_command = (
+		f"docker run --name attempt{attempt_id} --rm -i -d "
+		f"--cpus={specifications.getAttribute('cpu')} "
+		f"--memory={specifications.getAttribute('mem')}m "
+		f"-v {settings.DOCKER_CDN_PATH}:/disco {image} sleep 600"
+	)
+	logger.info(f"Creating Docker container for Attempt {attempt_id}: {docker_command}")
+	exec_command(docker_command, settings.LOCAL_STATIC_CDN_PATH)
+
+
 def run_test_in_docker(test_id, attempt_id):
-	data_path = settings.DOCKER_CDN_PATH
+	"""
+	Runs a test in a Docker container for the given attempt.
+	"""
+	logger.warning(f"Atempt {attempt_id}: Executing Test {test_id}.")
 	local_data_path = settings.LOCAL_STATIC_CDN_PATH
-	
+
 	attempt = Attempt.getByID(attempt_id)
 	contest = attempt.getContest()
 	specifications = contest.getSpecifications()
+
 	run_args = ""
-	# Test id 0 means compilation
+	
+	# If it's a specific test (test_id > 0), retrieve its specifications
 	if test_id > 0:
 		test = Test.getByID(test_id)
 		run_args = test.getRunArgs()
 		test_specifications = test.getSpecifications()
-		if test_specifications is not None:
-			specifications = test_specifications
-	# Just to be sure
-	if specifications:
-		language = contest.getLanguage()
-		image = language.lower() + '_spec_test'
-		script = language.lower() + '_specs.sh'
-		if test_id == 0:
-			docker_command = f'docker run --name atempt{attempt_id} --rm -i -d '
-			docker_command += f'--cpus={specifications.getAttribute("cpu")} '
-			docker_command += f'--memory={specifications.getAttribute("mem")}m '
-			docker_command += f'-v {data_path}:/disco {image} '
-			docker_command += f'sleep 600'
-			#print(docker_command)
-			logger.info(docker_command)
-			exec_command(docker_command, local_data_path)
-			logger.info("Done")
+		specifications = test_specifications or specifications
 
-		"""
-		docker_command = f'docker exec -i atempt{attempt_id} {script} '
-		docker_command += f'--timeout {specifications.getAttribute("timeout")} --attempt {attempt_id} --test {test_id} '
-		docker_command += f'--contest {contest.id} --fsize {specifications.getAttribute("fsize")} '
-		docker_command += f'--cflags "{specifications.getAttribute("compile_flags")}" '
-		docker_command += f'--lflags "{specifications.getAttribute("linkage_flags")}" '
-		docker_command += f'--runargs "{specifications.getAttribute("run_arguments")}" '
-		"""
-		docker_command = f'docker exec -i atempt{attempt_id} {script}'
-		docker_command += get_docker_env_vars(attempt_id, test_id, contest.id, run_args, specifications)
-		print(docker_command)
+	# Ensure specifications exist
+	if not specifications:
+		logger.warning(f"No specifications found for Attempt {attempt_id}, Test {test_id}.")
+		return
+
+	# Determine Docker configuration based on the language
+	language = contest.getLanguage().lower()
+	script = f"{language}_specs.sh"
+
+	# Construct Docker exec command for running the test
+	docker_command = f"docker exec -i attempt{attempt_id} {script}"
+	docker_command += get_docker_env_vars(attempt_id, test_id, contest.id, run_args, specifications)
+
+	try:
 		exec_command(docker_command, local_data_path)
-	else:
-		print("No specifications for ")
-		print(attempt)
-		print(contest)
-
-# def run_test_in_docker(test_id, attempt_id):
-# 	"""
-# 	Runs a test in a Docker container with specified configurations.
-# 	"""
-# 	data_path = settings.DOCKER_CDN_PATH
-# 	local_data_path = settings.LOCAL_STATIC_CDN_PATH
-
-# 	attempt = Attempt.getByID(attempt_id)
-# 	contest = attempt.getContest()
-# 	specifications = contest.getSpecifications()
-
-# 	# Determine if this is a compilation step or a test run
-# 	run_args = ""
-# 	if test_id > 0:
-# 		test = Test.getByID(test_id)
-# 		run_args = test.getRunArgs()
-# 		test_specifications = test.getSpecifications()
-# 		specifications = test_specifications or specifications
-
-# 	if not specifications:
-# 		logger.warning(f"No specifications found for Attempt {attempt_id}, Test {test_id}.")
-# 		return
-
-# 	language = contest.getLanguage().lower()
-# 	image = f"{language}_spec_test"
-# 	script = f"{language}_specs.sh"
-
-# 	if test_id == 0:
-# 		# Start Docker container for compilation
-# 		docker_command = (
-# 			f"docker run --name attempt{attempt_id} --rm -i -d "
-# 			f"--cpus={specifications.getAttribute('cpu')} "
-# 			f"--memory={specifications.getAttribute('mem')}m "
-# 			f"-v {data_path}:/disco {image} sleep 600"
-# 		)
-# 		logger.info(f"Starting Docker container for Attempt {attempt_id}: {docker_command}")
-# 		exec_command(docker_command, local_data_path)
-# 		logger.info("Docker container started for compilation.")
-# 	else:
-# 		# Execute test in Docker container
-# 		docker_command = f"docker exec -i attempt{attempt_id} {script}"
-# 		docker_command += get_docker_env_vars(attempt_id, test_id, contest.id, run_args, specifications)
-
-# 		logger.info(f"Executing test in Docker for Attempt {attempt_id}, Test {test_id}: {docker_command}")
-# 		exec_command(docker_command, local_data_path)
-# 		logger.info(f"Test {test_id} executed successfully for Attempt {attempt_id}.")
-
+		logger.info(f"Test {test_id} executed successfully for Attempt {attempt_id}.")
+	except Exception as e:
+		logger.error(f"Error during execution of Test {test_id} for Attempt {attempt_id}: {e}")
+		raise
 
 def extract(f):
 	print(f.path)
