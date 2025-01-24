@@ -130,7 +130,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOCAL_STATIC_CDN_PATH = os.path.join(os.path.dirname(BASE_DIR), 'data')
-DOCKER_CDN_PATH = '/Users/pserra/Documents/Pandora/data'
+DOCKER_CDN_PATH = '/Users/arroz/data'
+
+SUBMISSIONS_ROOT = 'submissions/'
+TESTS_ROOT = 'tests/'
+CONTESTS_ROOT = 'contests/'
+DATAFILES_ROOT = 'datafiles/'
+
+
 
 
 STATIC_ROOT = os.path.join(LOCAL_STATIC_CDN_PATH, 'static')

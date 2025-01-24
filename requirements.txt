@@ -7,6 +7,7 @@ fontawesome-free==5.15.2
 coolname==1.1.0
 django-feather==0.2.6
 celery==5.0.2
+#celery==5.4.0
 celery-progress==0.0.14
 redis==3.5.3
 djangorestframework
