@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 import os
-
+import sys
 #try:
 #    from .local_settings import *
 #except ImportError:
@@ -25,6 +25,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+sys.modules['fontawesome_free'] = __import__('fontawesome-free')
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,7 +44,7 @@ INSTALLED_APPS = [
 	'administration',
 	'shared',
 	'social_django',
-	'fontawesome-free',
+	'fontawesome_free',
 	# Celery apps
 	'celery',
 	'celery_progress',
@@ -117,12 +119,14 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+#USE_TZ = True
+
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -312,3 +316,4 @@ DATABASES = {
 # }
 
 #DATABASES = {"default": DATABASES_ALL[os.environ.get("DJANGO_DB", DB_SQLITE)]}
+
