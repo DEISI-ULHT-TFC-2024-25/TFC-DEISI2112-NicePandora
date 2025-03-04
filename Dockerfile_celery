@@ -26,9 +26,6 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Copy the start script and ensure it is executable
-COPY ./docker/start /start
-RUN chmod +x /start
-
 COPY ./docker/worker_entrypoint /worker_entrypoint
 RUN chmod +x /worker_entrypoint
 

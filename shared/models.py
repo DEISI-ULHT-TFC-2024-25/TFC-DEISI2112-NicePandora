@@ -570,7 +570,6 @@ class Team(models.Model):
 			for att in attempts:
 				if att.team == self:
 					return att, rank
-				rank += 1
 		return None, 0
 
 	@classmethod

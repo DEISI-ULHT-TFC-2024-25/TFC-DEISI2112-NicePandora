@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 import pandora
 from administration.views.general import superuser_only

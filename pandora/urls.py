@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, re_path, include # url
+from django.urls import path, include # url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
@@ -37,9 +37,9 @@ base_urlpatterns = [
     path('login/', login_view, name='login'),
     # path('signup/', register_view, name='register'),
     # re_path(r'^login/$', auth_views.LoginView.as_view(), name='login'),
-    re_path(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
-	re_path('oauth/', include('social_django.urls', namespace='social')),
-    re_path(r'^celery-progress/', include('celery_progress.urls')),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+	path('oauth/', include('social_django.urls', namespace='social')),
+    path('celery-progress/', include('celery_progress.urls')),
 	#path(
     #'logout/',
     #LogoutView.as_view(template_name=settings.LOGOUT_REDIRECT_URL),

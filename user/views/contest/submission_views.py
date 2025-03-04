@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 from shared.routines import *
 from shared.forms import AttemptModelForm
 from user.context_functions import *
