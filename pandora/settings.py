@@ -26,6 +26,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 sys.modules['fontawesome_free'] = __import__('fontawesome-free')
 
 # Application definition
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'crispy_forms',
+	'crispy_bootstrap5',
 	'corsheaders',
 	'rest_framework',
 	'rest_framework.authtoken',
@@ -51,7 +55,12 @@ INSTALLED_APPS = [
 	'api',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Celery Progress Settings
+CELERY_PROGRESS_BACKEND = 'celery_progress.backends.redis.RedisBackend'
+CELERY_PROGRESS_EXPIRES = 60 * 60  # 1 hour
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
