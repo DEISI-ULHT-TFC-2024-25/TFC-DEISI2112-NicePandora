@@ -3,6 +3,10 @@ from django.urls import path
 from .views import contest_views, group_views, general
 from .views.contest import team_views, submission_views
 
+# AI
+from .views.ai_hints_views import ai_views
+
+
 urlpatterns = [
 
     # General
@@ -25,6 +29,8 @@ urlpatterns = [
     path('groups/join', group_views.join_view, name='user_group_join'),
     path('groups/<int:group_id>/', group_views.detail_dashboard_view, name='user_groups_detail_dashboard'),
 
+    # AI Hints
+    path('chat/', ai_views.gemini_chat, name='gemini_chat'),
 
     # Old
 

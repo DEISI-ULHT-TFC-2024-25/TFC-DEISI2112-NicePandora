@@ -77,6 +77,7 @@ class Profile(models.Model):
 	number = models.IntegerField(null=True, blank=True)
 	gprd = models.BooleanField(null=True, default=True, blank=True)
 	valid = models.BooleanField(null=False, default=False, blank=False)
+    # gemini_key = models.CharField(max_length=255, null=True, blank=True)  # Novo campo opcional
 
 	def __str__(self):  # __unicode__ for Python 2
 		return self.user.username

@@ -103,6 +103,7 @@
                         <th>Args</th>
                         <th>Input</th>
                         <th>Exp./Obt.</th>
+                        <th>AI Help</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -141,6 +142,13 @@
                                             data-target="#modal-expected{{ forloop.counter }}">Open
                                     </button>
                                 {% endif %}
+                            </td>
+                            <td>
+                                
+                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                            data-target="#modal-expected{{ forloop.counter }}">Help
+                                    </button>
+                                
                             </td>
                         </tr>
                     {% endfor %}

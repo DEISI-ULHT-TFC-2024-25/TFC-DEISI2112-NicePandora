@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat com Gemini</title>
+</head>
+<body>
+    <h2>Chat com Gemini</h2>
+    
+    <form id="chatForm" method="POST">
+        {% csrf_token %}
+        <label for="user_input">Frase:</label>
+        <input type="text" id="user_input" name="user_input" required>
+
+        <label for="prompt">Prompt:</label>
+        <input type="text" id="prompt" name="prompt" required>
+
+        <button type="button" onclick="sendMessage()">Enviar</button>
+    </form>
+
+    <p><strong>Resposta:</strong> <span id="response"></span></p>
+    <a href="{% url 'user_dashboard' %}">Dashboard</a>
+
+    <script>
+        async function sendMessage() {
+            let form = document.getElementById("chatForm");
+            let formData = new FormData(form);
+    
+            let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+            let response = await fetch("", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            });
+    
+            let data = await response.json();
+            document.getElementById("response").innerText = data.response;
+        }
+    </script>
+</body>
+</html>

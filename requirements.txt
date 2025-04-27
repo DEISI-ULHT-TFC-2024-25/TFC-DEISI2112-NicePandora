@@ -21,5 +21,7 @@ requests
 django-cors-headers==3.11.0
 djangorestframework-simplejwt==5.2.2
 psycopg2==2.9.10
+openai==0.28.0
+google-generativeai==0.8.4
 
 

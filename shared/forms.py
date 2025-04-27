@@ -231,7 +231,7 @@ class ContestModelForm(forms.ModelForm):
 class UserModelForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name']
+        fields = ['first_name', 'last_name'] # Adicionar campo Gemini Key aqui
 
 
 class ProfileModelForm(forms.ModelForm):
