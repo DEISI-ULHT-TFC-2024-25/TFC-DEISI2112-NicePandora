@@ -185,3 +185,4 @@ user: admin, password: admin
 5. Aceder a http://127.0.0.1:8010/admin
 
 6. Aceder a http://127.0.0.1:8010/admin-django
+# TFC-DEISI2112-NicePandora
