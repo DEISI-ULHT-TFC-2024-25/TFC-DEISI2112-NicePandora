@@ -77,7 +77,7 @@ class Profile(models.Model):
 	number = models.IntegerField(null=True, blank=True)
 	gprd = models.BooleanField(null=True, default=True, blank=True)
 	valid = models.BooleanField(null=False, default=False, blank=False)
-    # gemini_key = models.CharField(max_length=255, null=True, blank=True)  # Novo campo opcional
+	gemini_key = models.CharField(max_length=255, null=True, blank=True)  # Novo campo opcional
 
 
 	def __str__(self):  # __unicode__ for Python 2
@@ -155,6 +155,11 @@ class Contest(models.Model):
 	max_submitions = models.PositiveIntegerField(default=0)
 	language = models.CharField(max_length=512, null=False, blank=False, choices=[('C', 'C'), ('Java', 'Java'), ('Python', 'Python')])
 	archived = models.BooleanField(null=False, default=False, blank=False)
+	
+	# Campos para avaliação da IA
+	ai_ratings = models.JSONField(default=dict, blank=True)  # Armazena {user_id: {"rating": 1-5, "comment": "texto"}}
+	ai_rated_by = models.ManyToManyField(User, related_name='rated_contests', blank=True)  # Usuários que já avaliaram
+	blacklist = models.TextField(null=True, blank=True, help_text="Palavras proibidas separadas por vírgula (ex: palavra1,palavra2,palavra3)")
 
 	@classmethod
 	def getContestsForUser(cls, request):
@@ -270,6 +275,9 @@ class Contest(models.Model):
 		thirty_days_ago = datetime.today() - timedelta(days=30)
 		return self.attempt_set.filter(date__gt=thirty_days_ago)
 
+	def getDescription(self):
+		return self.description	
+
 
 
 class Test(models.Model):
@@ -280,13 +288,19 @@ class Test(models.Model):
 	mandatory = models.BooleanField(null=False, default=False)
 	weight_pct = models.DecimalField(default=10, null=False, decimal_places=2, max_digits=6)
 	run_arguments = models.CharField(max_length=512, null=False, default="", blank=True)
+	description = models.TextField(null=True, blank=True)  # Novo campo opcional
 
 	view_diff = models.BooleanField(null=False, default=True)
 	view_input = models.BooleanField(null=False, default=True)
 	view_args = models.BooleanField(null=False, default=True)
 	view_error = models.BooleanField(null=False, default=True)
-
-
+	help_ai = models.BooleanField(null=False, default=True)  # Novo campo para controlar se o teste tem ajuda AI
+	help_difficulty = models.CharField(
+		max_length=10,
+		choices=[('Fácil', 'Fácil'), ('Médio', 'Médio'), ('Difícil', 'Difícil')],
+		default='Médio'
+	) 
+	gemini_responses = models.JSONField(default=list, blank=True)  # Lista de respostas do Gemini com timestamps
 
 	#type_of_feedback = models.PositiveIntegerField(default=1, null=False, blank=False)
 

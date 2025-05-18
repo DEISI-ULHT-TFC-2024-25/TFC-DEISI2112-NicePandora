@@ -3,8 +3,6 @@ from django.urls import path
 from .views import contest_views, group_views, general
 from .views.contest import team_views, submission_views
 
-# AI
-from .views.ai_hints_views import ai_views
 
 
 urlpatterns = [
@@ -23,14 +21,13 @@ urlpatterns = [
     path('contests/<int:contest_id>/submission/', submission_views.submit_view, name='contest_attempt_form_view'),
     path('contests/<int:contest_id>/submission/<int:submission_id>/', submission_views.detail_view, name='contest_attempt_view'),
     path('contests/<int:contest_id>/submission/<int:submission_id>/download', submission_views.download_submission, name='contest_submission_download'),
+    path('gemini_api/', submission_views.gemini_api, name='gemini_api'),
+    path('submit_rating/', submission_views.submit_rating, name='submit_rating'),
 
     # Groups
     path('groups/', group_views.dashboard_view, name='user_groups_home'),
     path('groups/join', group_views.join_view, name='user_group_join'),
     path('groups/<int:group_id>/', group_views.detail_dashboard_view, name='user_groups_detail_dashboard'),
-
-    # AI Hints
-    path('chat/', ai_views.gemini_chat, name='gemini_chat'),
 
     # Old
 

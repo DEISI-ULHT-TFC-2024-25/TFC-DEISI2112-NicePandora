@@ -38,6 +38,9 @@ class ContestSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
 	groups = serializers.SerializerMethodField()
 	teams = serializers.SerializerMethodField()
+	number = serializers.IntegerField(required=False, default=0)
+	valid = serializers.BooleanField(required=False, default=False)
+	gemini_key = serializers.CharField(required=False, allow_blank=True)
 
 	def get_groups(self, obj):
 		return GroupSerializer(obj.groups(), many=True).data
@@ -45,14 +48,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 	def get_teams(self, obj):
 		return TeamSerializer(obj.teams(), many=True).data
 
-
-	number = serializers.IntegerField(required=False, default=0)
-	valid = serializers.BooleanField(required=False, default=False)
-
-
 	class Meta:
 		model = Profile
-		fields = ['number', 'valid', 'groups', 'teams']
+		fields = ['number', 'valid', 'groups', 'teams', 'gemini_key']
 
 
 class UserSerializer(serializers.ModelSerializer):

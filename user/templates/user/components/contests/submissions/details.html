@@ -1,4 +1,6 @@
 {% load static %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/submissions/details.css' %}">
 
 <div class="row justify-content-center align-items-center mb-3">
     {% if team_submission_details.attempt.getTimedOutClassifications.count >= 2 %}
@@ -103,7 +105,7 @@
                         <th>Args</th>
                         <th>Input</th>
                         <th>Exp./Obt.</th>
-                        <th>AI Help</th>
+                        <th>AI</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -144,11 +146,21 @@
                                 {% endif %}
                             </td>
                             <td>
-                                
-                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
-                                            data-target="#modal-expected{{ forloop.counter }}">Help
+                                {% if r.passed != True and r.passed != 1 and r.test.help_ai == True %}
+                                    <button type="button" class="btn btn-sm btn-primary w-100"
+                                            data-toggle="modal"
+                                            data-target="#modal-gemini{{ forloop.counter }}"
+                                            data-counter="{{ forloop.counter }}"
+                                            data-contest-id="{{ team_submission_details.contest.id }}"
+                                            data-submission-id="{{ team_submission_details.attempt.id }}"
+                                            data-test-id="{{ r.test.id }}"
+                                            data-output="{{ r.output }}"
+                                            data-diff="{{ r.diff }}"
+                                            data-result-index="{{ forloop.counter0 }}"
+                                            onclick="openGeminiModal(this)">
+                                        Help
                                     </button>
-                                
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -196,6 +208,8 @@
         </div>
     </div>
 </div>
+
+
 
 {% for r in team_submission_details.results %}
     {% if r.test.view_input %}
@@ -307,5 +321,543 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="modal-gemini{{ forloop.counter }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Help</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="chat-window-{{ forloop.counter }}" class="border rounded p-3 mb-3" style="height: 300px; overflow-y: auto;">
+                            <!-- Mensagens serão inseridas aqui -->
+                        </div>
+                        <div class="input-group">
+                            <textarea id="gemini-input-{{ forloop.counter }}" class="form-control" placeholder="Pergunta qualquer coisa" rows="1" style="resize: none;"></textarea>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" 
+                                        id="send-button-{{ forloop.counter }}"
+                                        data-counter="{{ forloop.counter }}"
+                                        data-contest-id="{{ team_submission_details.contest.id }}"
+                                        data-submission-id="{{ team_submission_details.attempt.id }}"
+                                        data-test-id="{{ r.test.id }}"
+                                        data-output="{{ r.output }}"
+                                        data-diff="{{ r.diff }}"
+                                        data-result-index="{{ forloop.counter0 }}"
+                                        onclick="event.preventDefault(); event.stopPropagation(); const input = document.getElementById('gemini-input-{{ forloop.counter }}'); const userInput = input.value; if (userInput && userInput.trim() !== '') { sendToGemini(this, userInput); }">
+                                    Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endfor %}
+
+<!-- Modal de Avaliação -->
+<div class="modal fade" id="rating-modal" tabindex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ratingModalLabel">Rate AI</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="rating">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <div id="rating-error" class="invalid-feedback text-danger mt-2" style="display: none;">
+                        Por favor, seleciona uma avaliação.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rating-comment">Comentários <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="rating-comment" rows="3" placeholder="Escreve comentários sobre a ajuda recebida..." required></textarea>
+                    <div id="comment-error" class="invalid-feedback text-danger mt-2" style="display: none;">
+                        Por favor, escreve um comentário sobre a ajuda recebida.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submit-rating">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Sucesso -->
+<div class="modal fade" id="success-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-check-circle text-success mb-3" style="font-size: 3em;"></i>
+                <h5>Obrigado pela tua avaliação!</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+console.log("Script carregado!");
+// Função para abrir o modal e iniciar o chat
+function openGeminiModal(button) {
+    const counter = button.getAttribute('data-counter');
+    const contestId = button.getAttribute('data-contest-id');
+    const submissionId = button.getAttribute('data-submission-id');
+    const testId = button.getAttribute('data-test-id');
+    const obtained = button.getAttribute('data-output').trim();
+    const diff = button.getAttribute('data-diff').trim();
+    
+    // Verificação dos valores
+    console.log('Valores dos atributos:', {
+        counter: counter,
+        contestId: contestId,
+        submissionId: submissionId,
+        testId: testId
+    });
+
+    // Verifica se os valores são válidos
+    if (!contestId || !submissionId || !testId) {
+        console.error('Valores inválidos:', {counter, contestId, submissionId, testId});
+        return;
+    }
+    
+    // Bloqueia o botão e textarea durante a primeira resposta
+    setLoadingState(counter, true);
+    
+    // Limpa o chat ao abrir
+    const chatWindow = document.getElementById(`chat-window-${counter}`);
+    chatWindow.innerHTML = "";
+    
+    // Mostra indicador de carregamento
+    chatWindow.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm text-success" role="status"><span class="sr-only">Carregando...</span></div></div>';
+    
+    // Adiciona evento para quando o modal for fechado
+    $(`#modal-gemini${counter}`).on('hidden.bs.modal', function () {
+        openRatingModal(contestId);
+    });
+    
+    // Envia requisição inicial para o Gemini
+    console.log('Enviando requisição inicial para o Gemini'); // Debug log
+    fetch("{% url 'gemini_api' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: new URLSearchParams({
+            contest_id: contestId,
+            submission_id: submissionId,
+            test_index: testId,
+            obtained: obtained,
+            diff: diff,
+            user_input: "" // Envia vazio para indicar que é a primeira interação
+        }),
+    })
+    .then(response => {
+        console.log('Resposta recebida:', response.status); // Debug log
+        return response.json();
+    })
+    .then(data => {
+        console.log('Dados recebidos:', data); // Debug log
+        if (data.response) {
+            const processedResponse = processMarkdown(data.response);
+            chatWindow.innerHTML = `
+                <div class="text-left mb-3">
+                    <span class="badge badge-success">Gemini</span>
+                    <div style="display: inline-block; background-color: #f8f9fa; border-radius: 12px; padding: 8px 12px; max-width: 80%; margin-top: 5px;">
+                        <span class="gemini-text chat-message">${processedResponse}</span>
+                    </div>
+                </div>
+            `;
+        } else if (data.error) {
+            const processedError = processMarkdown(data.error);
+            chatWindow.innerHTML = `<div class="text-left text-danger"><strong>Erro:</strong> ${processedError}</div>`;
+        }
+        // Desbloqueia o botão e textarea após a primeira resposta
+        setLoadingState(counter, false);
+    })
+    .catch(error => {
+        console.error('Erro na requisição:', error); // Debug log
+        chatWindow.innerHTML = `<div class="text-left text-danger"><em>Erro ao contactar o Gemini: ${error.message}</em></div>`;
+        // Desbloqueia o botão e textarea em caso de erro
+        setLoadingState(counter, false);
+    });
+}
+
+function setLoadingState(counter, isLoading) {
+    const button = document.getElementById(`send-button-${counter}`);
+    const textarea = document.getElementById(`gemini-input-${counter}`);
+    
+    if (isLoading) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        textarea.disabled = true;
+        textarea.style.cursor = 'not-allowed';
+        textarea.style.backgroundColor = '#e9ecef';
+    } else {
+        button.disabled = false;
+        button.innerHTML = 'Enviar';
+        textarea.disabled = false;
+        textarea.style.cursor = 'text';
+        textarea.style.backgroundColor = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Adiciona event listener para a tecla Enter em todos os inputs do Gemini
+    document.querySelectorAll('[id^="gemini-input-"]').forEach(input => {
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Previne a quebra de linha
+                const counter = this.id.split('-')[2];
+                const button = document.getElementById(`send-button-${counter}`);
+                const userInput = this.value;
+                if (userInput && userInput.trim() !== '' && !button.disabled) {
+                    sendToGemini(button, userInput);
+                }
+            }
+        });
+    });
+});
+
+function typeWriter(element, text, speed = 10) {
+    let i = 0;
+    element.innerHTML = '';
+    const chatWindow = element.closest('.border.rounded.p-3.mb-3');
+    const counter = element.closest('[id^="modal-gemini"]').querySelector('[id^="send-button-"]').getAttribute('data-counter');
+    
+    function type() {
+        if (i < text.length) {
+            if (text[i] === '<') {
+                const endTag = text.indexOf('>', i);
+                if (endTag !== -1) {
+                    element.innerHTML += text.substring(i, endTag + 1);
+                    i = endTag + 1;
+                } else {
+                    element.innerHTML += text[i];
+                    i++;
+                }
+            } else if (text[i] === '\\n' || text[i] === '\n') {
+                element.innerHTML += '<br>';
+                i++;
+            } else {
+                element.innerHTML += text[i];
+                i++;
+            }
+            // Atualiza o scroll após cada caractere
+            if (chatWindow) {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+            setTimeout(type, speed);
+        } else {
+            // Desativa o estado de loading apenas quando a animação terminar
+            setLoadingState(counter, false);
+        }
+    }
+    type();
+}
+
+function processMarkdown(text) {
+    // Função para verificar se o marcador está corretamente formatado
+    function isValidMarkdown(match, index, text) {
+        // Verifica se está no início da linha ou após um espaço
+        const isStart = index === 0 || text[index - 1] === ' ';
+        // Verifica se está no fim da linha ou antes de um espaço
+        const isEnd = index + match.length === text.length || text[index + match.length] === ' ';
+        return isStart && isEnd;
+    }
+
+    // Processa negrito
+    text = text.replace(/\*\*(.*?)\*\*/g, function(match, content, offset) {
+        if (isValidMarkdown(match, offset, text)) {
+            return `<strong>${content}</strong>`;
+        }
+        return match;
+    });
+
+    // Processa itálico
+    text = text.replace(/\*(.*?)\*/g, function(match, content, offset) {
+        if (isValidMarkdown(match, offset, text)) {
+            return `<em>${content}</em>`;
+        }
+        return match;
+    });
+
+    // Processa código inline
+    text = text.replace(/`(.*?)`/g, function(match, content, offset) {
+        if (isValidMarkdown(match, offset, text)) {
+            return `<code>${content}</code>`;
+        }
+        return match;
+    });
+
+    return text;
+}
+
+function sendToGemini(button, userInput) {
+    console.log('Função sendToGemini chamada');
+    const counter = button.getAttribute('data-counter');
+    console.log('Counter:', counter);
+    
+    const chatWindow = document.getElementById('chat-window-' + counter);
+    console.log('Chat window element:', chatWindow);
+    
+    if (!chatWindow) {
+        console.error('Chat window não encontrado');
+        return;
+    }
+    
+    // Ativa o estado de carregamento
+    setLoadingState(counter, true);
+    
+    const contestId = button.getAttribute('data-contest-id');
+    const submissionId = button.getAttribute('data-submission-id');
+    const testId = button.getAttribute('data-test-id');
+    const output = button.getAttribute('data-output');
+    const diff = button.getAttribute('data-diff');
+    
+    // Processa o texto do usuário antes de exibir, preservando quebras de linha
+    const processedUserInput = processMarkdown(userInput.trim().replace(/^\s+/gm, '').replace(/\n/g, '<br>'));
+    
+    // Adiciona mensagem do usuário alinhada à direita
+    chatWindow.innerHTML += `
+        <div class="text-right mb-2">
+            <div style="display: inline-block; background-color: #007bff; color: white; border-radius: 12px; padding: 8px 12px; max-width: 80%; width: fit-content;">
+                <span class="chat-message">${processedUserInput}</span>
+            </div>
+        </div>
+    `;
+    
+    // Adiciona indicador de digitação
+    chatWindow.innerHTML += `
+        <div class="text-left mb-2">
+            <span class="badge badge-success">Gemini</span>
+            <div style="display: inline-block; background-color: #f8f9fa; border-radius: 12px; padding: 8px 12px; max-width: 80%; margin-top: 5px;">
+                <div class="spinner-border spinner-border-sm text-success" role="status">
+                    <span class="sr-only">Carregando...</span>
+                </div>
+            </div>
+        </div>
+    `;
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    
+    // Limpa o campo de texto imediatamente
+    const input = document.getElementById('gemini-input-' + counter);
+    if (input) {
+        input.value = '';
+    }
+    
+    // Obtém o token CSRF da meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    // Envia para a API
+    fetch("{% url 'gemini_api' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
+        },
+        body: new URLSearchParams({
+            contest_id: contestId,
+            submission_id: submissionId,
+            test_index: testId,
+            obtained: output,
+            diff: diff,
+            user_input: userInput
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove o indicador de digitação
+        const typingIndicator = chatWindow.querySelector('.spinner-border');
+        if (typingIndicator) {
+            typingIndicator.parentElement.parentElement.remove();
+        }
+        
+        if (data.error) {
+            const processedError = processMarkdown(data.error);
+            chatWindow.innerHTML += `
+                <div class="text-left mb-2">
+                    <span class="badge badge-success">Gemini</span>
+                    <div style="display: inline-block; background-color: #f8f9fa; border-radius: 12px; padding: 8px 12px; max-width: 80%; margin-top: 5px;">
+                        <span class="gemini-text chat-message">Erro: ${processedError}</span>
+                    </div>
+                </div>
+            `;
+            setLoadingState(counter, false);
+        } else {
+            const processedResponse = processMarkdown(data.message);
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'text-left mb-2';
+            responseDiv.innerHTML = `
+                <span class="badge badge-success">Gemini</span>
+                <div style="display: inline-block; background-color: #f8f9fa; border-radius: 12px; padding: 8px 12px; max-width: 80%; margin-top: 5px;">
+                    <span class="gemini-text chat-message"></span>
+                </div>
+            `;
+            chatWindow.appendChild(responseDiv);
+            const textElement = responseDiv.querySelector('.gemini-text');
+            typeWriter(textElement, processedResponse, 5);
+        }
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const typingIndicator = chatWindow.querySelector('.spinner-border');
+        if (typingIndicator) {
+            typingIndicator.parentElement.parentElement.remove();
+        }
+        chatWindow.innerHTML += `
+            <div class="text-left mb-2">
+                <span class="badge badge-success">Gemini</span>
+                <div style="display: inline-block; background-color: #f8f9fa; border-radius: 12px; padding: 8px 12px; max-width: 80%; margin-top: 5px;">
+                    <span class="gemini-text chat-message">Erro ao processar sua mensagem.</span>
+                </div>
+            </div>
+        `;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        setLoadingState(counter, false);
+    });
+}
+
+// Funções para gerenciar a avaliação
+let currentRating = 0;
+let currentContestId = null;
+
+// Inicializa o sistema de avaliação
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating i');
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.getAttribute('data-rating');
+            setRating(rating);
+        });
+    });
+
+    // Adiciona evento para o botão de enviar avaliação
+    document.getElementById('submit-rating').addEventListener('click', submitRating);
+});
+
+// Define a avaliação selecionada
+function setRating(rating) {
+    currentRating = rating;
+    const stars = document.querySelectorAll('.rating i');
+    stars.forEach(star => {
+        const starRating = star.getAttribute('data-rating');
+        if (starRating <= rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+}
+
+// Função para abrir o modal de avaliação
+function openRatingModal(contestId) {
+    // Verifica se o usuário já avaliou este contest
+    fetch("{% url 'submit_rating' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: new URLSearchParams({
+            contest_id: contestId,
+            check_only: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.already_rated) {
+            // Se já avaliou, não mostra o modal
+            return;
+        }
+        // Se não avaliou, mostra o modal
+        currentContestId = contestId;
+        $('#rating-modal').modal('show');
+    })
+    .catch(error => {
+        console.error('Erro ao verificar avaliação:', error);
+    });
+}
+
+// Envia a avaliação para o servidor
+function submitRating() {
+    const commentError = document.getElementById('comment-error');
+    const ratingError = document.getElementById('rating-error');
+    commentError.style.display = 'none';
+    ratingError.style.display = 'none';
+
+    if (!currentRating) {
+        ratingError.style.display = 'block';
+        return;
+    }
+
+    const comment = document.getElementById('rating-comment').value.trim();
+    if (!comment) {
+        commentError.style.display = 'block';
+        return;
+    }
+
+    const submitButton = document.getElementById('submit-rating');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
+
+    fetch("{% url 'submit_rating' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: new URLSearchParams({
+            contest_id: currentContestId,
+            rating: currentRating,
+            comment: comment
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            $('#rating-modal').modal('hide');
+            $('#success-modal').modal('show');
+            resetRatingForm();
+            
+            // Fecha o modal de sucesso após 2 segundos
+            setTimeout(() => {
+                $('#success-modal').modal('hide');
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao enviar avaliação:', error);
+        alert('Ocorreu um erro ao enviar sua avaliação. Por favor, tente novamente.');
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Enviar Avaliação';
+    });
+}
+
+// Reseta o formulário de avaliação
+function resetRatingForm() {
+    currentRating = 0;
+    document.querySelectorAll('.rating i').forEach(star => {
+        star.classList.remove('active');
+    });
+    document.getElementById('rating-comment').value = '';
+}
+</script>

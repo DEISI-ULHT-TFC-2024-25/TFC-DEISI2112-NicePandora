@@ -143,7 +143,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 LOCAL_STATIC_CDN_PATH = os.path.join(os.path.dirname(BASE_DIR), 'data')
-DOCKER_CDN_PATH = '/Users/arroz/data'
+DOCKER_CDN_PATH = '/home/franciscochambel/data'
 
 SUBMISSIONS_ROOT = 'submissions/'
 TESTS_ROOT = 'tests/'
