@@ -8,7 +8,7 @@
 
 # CONTESTS #
 
-from shared.models import Contest, Profile, Team, Attempt
+from shared.models import Contest, Profile, Team, Attempt, User
 
 from datetime import datetime, timedelta
 
@@ -333,6 +333,18 @@ def getAdminContestsTeamsManagerContext(users_out, users_in, team):
 
 # For admin/components/contests/dashboard_cards.html
 def getAdminContestDashboardCardsContext(contest, submission_count, team_count, test_count, user_count):
+    # Process AI ratings to include user names
+    if contest.ai_ratings:
+        for user_id, rating_data in contest.ai_ratings.items():
+            try:
+                user_obj = User.objects.get(id=user_id)
+                rating_data['user_name'] = f"{user_obj.first_name} {user_obj.last_name}"
+                # Ensure date is properly parsed from ISO format
+                if isinstance(rating_data['date'], str):
+                    rating_data['date'] = datetime.fromisoformat(rating_data['date'].replace('Z', '+00:00'))
+            except User.DoesNotExist:
+                rating_data['user_name'] = "Unknown User"
+
     return {
         'admin_contests_dashboard_cards': {
             'contest': contest,
