@@ -267,7 +267,7 @@ class AdminUserModelForm(forms.ModelForm):
 class AdminUserProfileModelForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['number', 'gprd', 'valid']
+        fields = ['number', 'gprd', 'valid', 'gemini_key']
 
     def submit(self):
         if not self.is_valid():
