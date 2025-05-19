@@ -13,6 +13,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from functools import wraps
+import json
 
 
 @superuser_only
@@ -277,6 +278,18 @@ def gemini_api(request):
             })
             test.save()
             
+            # Salvar também no Contest
+            if not contest.gemini_responses:
+                contest.gemini_responses = {}
+            if str(test.id) not in contest.gemini_responses:
+                contest.gemini_responses[str(test.id)] = []
+            contest.gemini_responses[str(test.id)].append({
+                "user_input": "Primeira interação",
+                "response": response.text,
+                "timestamp": timezone.now().isoformat()
+            })
+            contest.save()
+            
             return JsonResponse({"response": response.text})
 
         # Caso 2: Follow-up (com user_input)
@@ -307,6 +320,20 @@ def gemini_api(request):
                         })
                         test.save()
 
+                        # Salvar também no Contest
+                        if not contest.gemini_responses:
+                            contest.gemini_responses = {}
+                        if str(test.id) not in contest.gemini_responses:
+                            contest.gemini_responses[str(test.id)] = []
+                        contest.gemini_responses[str(test.id)].append({
+                            "user_input": user_input,
+                            "response": response.text,
+                            "timestamp": timezone.now().isoformat(),
+                            "has_prohibited_words": True,
+                            "prohibited_words": found_words
+                        })
+                        contest.save()
+
                         # Enviar mensagem de correção ao Gemini
                         correction_message = f"A tua resposta anterior contém palavras proibidas ({', '.join(found_words)}). Por favor, reescreve a resposta sem utilizar estas palavras, visto que podem oferecer a solução ao aluno. Aqui está a tua resposta anterior para referência:\n\n{response.text}"
                         response = send_message_with_timeout(chat, correction_message)
@@ -321,6 +348,19 @@ def gemini_api(request):
                     "has_prohibited_words": False
                 })
                 test.save()
+
+                # Salvar também no Contest
+                if not contest.gemini_responses:
+                    contest.gemini_responses = {}
+                if str(test.id) not in contest.gemini_responses:
+                    contest.gemini_responses[str(test.id)] = []
+                contest.gemini_responses[str(test.id)].append({
+                    "user_input": user_input,
+                    "response": response.text,
+                    "timestamp": timezone.now().isoformat(),
+                    "has_prohibited_words": False
+                })
+                contest.save()
                 
                 return JsonResponse({"message": response.text})
             except Exception as e:
@@ -428,5 +468,28 @@ def submit_rating(request):
 
     except Contest.DoesNotExist:
         return JsonResponse({"error": "Contest não encontrado"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+@superuser_only
+def download_gemini_responses(request, contest_id):
+    try:
+        contest = Contest.objects.get(id=contest_id)
+        if not contest.gemini_responses:
+            return JsonResponse({"error": "No Gemini responses found for this contest"}, status=404)
+        
+        # Criar nome do arquivo baseado no short_name do contest
+        filename = f"{contest.short_name}_gemini_responses.json"
+        
+        # Criar resposta HTTP com o JSON
+        response = HttpResponse(
+            json.dumps(contest.gemini_responses, ensure_ascii=False, indent=2),
+            content_type='application/json; charset=utf-8'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+        
+    except Contest.DoesNotExist:
+        return JsonResponse({"error": "Contest not found"}, status=404)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)

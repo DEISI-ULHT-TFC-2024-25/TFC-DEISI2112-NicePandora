@@ -59,6 +59,7 @@ urlpatterns = [
          name='manager_contests_export'),    
      path('gemini_api/', submission_views.gemini_api, name='gemini_api'),
     path('submit_rating/', submission_views.submit_rating, name='submit_rating'),     
+    path('contests/<int:contest_id>/download-gemini-responses/', submission_views.download_gemini_responses, name='manager_contests_download_gemini_responses'),
     # GROUPS
     path('groups/', group_views.dashboard_view, name="admin_groups_home"),
     path('groups/create', group_views.create_view, name='admin_group_create'),

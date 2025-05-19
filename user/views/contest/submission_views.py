@@ -307,10 +307,22 @@ def gemini_api(request):
                 test.gemini_responses = []
             test.gemini_responses.append({
                 "user_input": "Primeira interação",
-                "response": response.text,
+                "response": response.text.encode('utf-8').decode('utf-8'),
                 "timestamp": timezone.now().isoformat()
             })
             test.save()
+            
+            # Salvar também no Contest
+            if not contest.gemini_responses:
+                contest.gemini_responses = {}
+            if str(test.id) not in contest.gemini_responses:
+                contest.gemini_responses[str(test.id)] = []
+            contest.gemini_responses[str(test.id)].append({
+                "user_input": "Primeira interação",
+                "response": response.text.encode('utf-8').decode('utf-8'),
+                "timestamp": timezone.now().isoformat()
+            })
+            contest.save()
             
             return JsonResponse({"response": response.text})
 
@@ -334,13 +346,27 @@ def gemini_api(request):
                         if not test.gemini_responses:
                             test.gemini_responses = []
                         test.gemini_responses.append({
-                            "user_input": user_input,
-                            "response": response.text,
+                            "user_input": user_input.encode('utf-8').decode('utf-8'),
+                            "response": response.text.encode('utf-8').decode('utf-8'),
                             "timestamp": timezone.now().isoformat(),
                             "has_prohibited_words": True,
                             "prohibited_words": found_words
                         })
                         test.save()
+
+                        # Salvar também no Contest
+                        if not contest.gemini_responses:
+                            contest.gemini_responses = {}
+                        if str(test.id) not in contest.gemini_responses:
+                            contest.gemini_responses[str(test.id)] = []
+                        contest.gemini_responses[str(test.id)].append({
+                            "user_input": user_input.encode('utf-8').decode('utf-8'),
+                            "response": response.text.encode('utf-8').decode('utf-8'),
+                            "timestamp": timezone.now().isoformat(),
+                            "has_prohibited_words": True,
+                            "prohibited_words": found_words
+                        })
+                        contest.save()
 
                         # Enviar mensagem de correção ao Gemini
                         correction_message = f"A tua resposta anterior contém palavras proibidas ({', '.join(found_words)}). Por favor, reescreve a resposta sem utilizar estas palavras, visto que podem oferecer a solução ao aluno. Aqui está a tua resposta anterior para referência:\n\n{response.text}"
@@ -350,12 +376,25 @@ def gemini_api(request):
                 if not test.gemini_responses:
                     test.gemini_responses = []
                 test.gemini_responses.append({
-                    "user_input": user_input,
-                    "response": response.text,
+                    "user_input": user_input.encode('utf-8').decode('utf-8'),
+                    "response": response.text.encode('utf-8').decode('utf-8'),
                     "timestamp": timezone.now().isoformat(),
                     "has_prohibited_words": False
                 })
                 test.save()
+
+                # Salvar também no Contest
+                if not contest.gemini_responses:
+                    contest.gemini_responses = {}
+                if str(test.id) not in contest.gemini_responses:
+                    contest.gemini_responses[str(test.id)] = []
+                contest.gemini_responses[str(test.id)].append({
+                    "user_input": user_input.encode('utf-8').decode('utf-8'),
+                    "response": response.text.encode('utf-8').decode('utf-8'),
+                    "timestamp": timezone.now().isoformat(),
+                    "has_prohibited_words": False
+                })
+                contest.save()
                 
                 return JsonResponse({"message": response.text})
             except Exception as e:
