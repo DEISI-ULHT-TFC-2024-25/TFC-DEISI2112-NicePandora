@@ -160,7 +160,7 @@ class Contest(models.Model):
 	ai_ratings = models.JSONField(default=dict, blank=True)  # Armazena {user_id: {"rating": 1-5, "comment": "texto"}}
 	ai_rated_by = models.ManyToManyField(User, related_name='rated_contests', blank=True)  # Usuários que já avaliaram
 	blacklist = models.TextField(null=True, blank=True, help_text="Palavras proibidas separadas por vírgula (ex: palavra1,palavra2,palavra3)")
-	gemini_responses = models.JSONField(default=dict, blank=True)  # Armazena {test_id: [{"user_input": "...", "response": "...", "timestamp": "...", "has_prohibited_words": true/false, "prohibited_words": ["palavra1", "palavra2", "palavra3"]}]}
+	gemini_responses = models.JSONField(default=dict, blank=True)  # Armazena {test_id: [{"user_input": "...", "response": "...", "timestamp": "...", "has_prohibited_words": true/false, "prohibited_words": ["palavra1", "palavra2", "palavra3"], "user": {"id": "...", "username": "...", "email": "..."}}]}
 
 	@classmethod
 	def getContestsForUser(cls, request):

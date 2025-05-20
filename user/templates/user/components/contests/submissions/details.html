@@ -93,6 +93,13 @@
                 </h5>
             </div>
             <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="btn-group" role="group" aria-label="Test filters">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="passed">Passed</button>
+                        <button type="button" class="btn btn-outline-danger" data-filter="failed">Failed</button>
+                    </div>
+                </div>
                 <table class="table table-responsive-lg">
                     <thead>
                     <tr>
@@ -836,10 +843,10 @@ function submitRating() {
             $('#success-modal').modal('show');
             resetRatingForm();
             
-            // Fecha o modal de sucesso após 2 segundos
+            // Fecha o modal de sucesso após 1 segundo
             setTimeout(() => {
                 $('#success-modal').modal('hide');
-            }, 2000);
+            }, 1000);
         }
     })
     .catch(error => {
@@ -860,4 +867,36 @@ function resetRatingForm() {
     });
     document.getElementById('rating-comment').value = '';
 }
+
+// Adiciona a lógica de filtro
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const testRows = document.querySelectorAll('table.table-responsive-lg tbody tr');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            const filter = this.getAttribute('data-filter');
+
+            testRows.forEach(row => {
+                const passedCell = row.querySelector('td:nth-child(5)');
+                const isPassed = passedCell.querySelector('.fa-check-circle') !== null;
+
+                if (filter === 'all') {
+                    row.style.display = '';
+                } else if (filter === 'passed' && isPassed) {
+                    row.style.display = '';
+                } else if (filter === 'failed' && !isPassed) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+});
 </script>

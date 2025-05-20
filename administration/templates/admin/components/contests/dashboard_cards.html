@@ -296,7 +296,8 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Pergunta</th>
+                                <th>Utilizador</th>
+                                <th>Input</th>
                                 <th>Resposta</th>
                                 <th>Palavras Proibidas</th>
                                 <th>Data</th>
@@ -345,6 +346,7 @@ $(document).ready(function() {
                 row.addClass('table-danger');
             }
             
+            row.append($('<td>').text(response.user ? response.user.username : ''));
             row.append($('<td>').text(response.user_input || ''));
             row.append($('<td>').text(response.response || ''));
             row.append($('<td>').text(response.prohibited_words ? response.prohibited_words.join(', ') : ''));

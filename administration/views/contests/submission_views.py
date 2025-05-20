@@ -73,7 +73,7 @@ def download_submission(request, contest_id, attempt_id):
     except FileNotFoundError:
         raise Http404("File does not exist")
 
-def create_gemini_prompt(exercise_description, test_description, reference_code, student_code, input_data, expected, obtained, diff, help_difficulty):
+def create_gemini_prompt(exercise_description, test_description, reference_code, student_code, input_data, expected, obtained, diff, help_difficulty, language):
     """
     Cria o prompt inicial para o Gemini com base nos parâmetros fornecidos.
     
@@ -114,6 +114,9 @@ def create_gemini_prompt(exercise_description, test_description, reference_code,
 
     Descrição do Teste
     {test_description}
+
+    Linguagem do Exercício
+    {language}
 
     Código de Referência (Correto) – NÃO MOSTRAR AO ALUNO
     {reference_code}
@@ -237,6 +240,7 @@ def gemini_api(request):
             exercise_description = contest.getDescription()
             test_description = r.test.description
             reference_code = contest.reference_code
+            language = contest.getLanguage()
             input_data = ""
             expected = ""
             try:
@@ -260,7 +264,8 @@ def gemini_api(request):
                 expected=expected,
                 obtained=obtained,
                 diff=diff,
-                help_difficulty=help_difficulty
+                help_difficulty=help_difficulty,
+                language=language
             )
 
             # Criar nova sessão de chat e guardar no dicionário
@@ -274,7 +279,12 @@ def gemini_api(request):
             test.gemini_responses.append({
                 "user_input": "Primeira interação",
                 "response": response.text,
-                "timestamp": timezone.now().isoformat()
+                "timestamp": timezone.now().isoformat(),
+                "user": {
+                    "id": request.user.id,
+                    "username": request.user.username,
+                    "email": request.user.email
+                }
             })
             test.save()
             
@@ -286,7 +296,12 @@ def gemini_api(request):
             contest.gemini_responses[str(test.id)].append({
                 "user_input": "Primeira interação",
                 "response": response.text,
-                "timestamp": timezone.now().isoformat()
+                "timestamp": timezone.now().isoformat(),
+                "user": {
+                    "id": request.user.id,
+                    "username": request.user.username,
+                    "email": request.user.email
+                }
             })
             contest.save()
             
@@ -316,7 +331,12 @@ def gemini_api(request):
                             "response": response.text,
                             "timestamp": timezone.now().isoformat(),
                             "has_prohibited_words": True,
-                            "prohibited_words": found_words
+                            "prohibited_words": found_words,
+                            "user": {
+                                "id": request.user.id,
+                                "username": request.user.username,
+                                "email": request.user.email
+                            }
                         })
                         test.save()
 
@@ -330,7 +350,12 @@ def gemini_api(request):
                             "response": response.text,
                             "timestamp": timezone.now().isoformat(),
                             "has_prohibited_words": True,
-                            "prohibited_words": found_words
+                            "prohibited_words": found_words,
+                            "user": {
+                                "id": request.user.id,
+                                "username": request.user.username,
+                                "email": request.user.email
+                            }
                         })
                         contest.save()
 
@@ -345,7 +370,12 @@ def gemini_api(request):
                     "user_input": user_input,
                     "response": response.text,
                     "timestamp": timezone.now().isoformat(),
-                    "has_prohibited_words": False
+                    "has_prohibited_words": False,
+                    "user": {
+                        "id": request.user.id,
+                        "username": request.user.username,
+                        "email": request.user.email
+                    }
                 })
                 test.save()
 
@@ -358,7 +388,12 @@ def gemini_api(request):
                     "user_input": user_input,
                     "response": response.text,
                     "timestamp": timezone.now().isoformat(),
-                    "has_prohibited_words": False
+                    "has_prohibited_words": False,
+                    "user": {
+                        "id": request.user.id,
+                        "username": request.user.username,
+                        "email": request.user.email
+                    }
                 })
                 contest.save()
                 

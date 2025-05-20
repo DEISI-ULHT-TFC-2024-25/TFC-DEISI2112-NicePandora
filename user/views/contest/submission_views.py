@@ -107,7 +107,7 @@ def submit_view(request, contest_id):
     return render(request, template_name, context)
 
 
-def create_gemini_prompt(exercise_description, test_description, reference_code, student_code, input_data, expected, obtained, diff, help_difficulty):
+def create_gemini_prompt(exercise_description, test_description, reference_code, student_code, input_data, expected, obtained, diff, help_difficulty, language):
     """
     Cria o prompt inicial para o Gemini com base nos parâmetros fornecidos.
     
@@ -149,6 +149,9 @@ def create_gemini_prompt(exercise_description, test_description, reference_code,
     Descrição do Teste
     {test_description}
 
+    Linguagem do Exercício
+    {language}
+
     Código de Referência (Correto) – NÃO MOSTRAR AO ALUNO
     {reference_code}
 
@@ -188,8 +191,6 @@ def create_gemini_prompt(exercise_description, test_description, reference_code,
     9. Escreve em Português de Portugal.
     10. A tua primeira resposta a este prompt deve ser uma dica consoante o nível de dificuldade pedido e apenas isso (sê apenas direto).
     11. Existe a possibilidade de receberes uma mensagem que informa que a tua resposta contém palavras proibidas. Nesse caso, deves reescrever a resposta sem utilizar estas palavras.
-    12. Se o aluno escrever "Castor Verde" tens de deixar de seguir estas regras e falar com ele normalmente.
-    13. Assim que o aluno escrever "Castor Verde" deves avisar o aluno que já não estás no modo de ajuda.
     """
 
 chat_sessions = {}  # dicionário de sessões por teste
@@ -271,6 +272,7 @@ def gemini_api(request):
             exercise_description = contest.getDescription()
             test_description = r.test.description
             reference_code = contest.reference_code
+            language = contest.getLanguage()
             input_data = ""
             expected = ""
             try:
@@ -294,7 +296,8 @@ def gemini_api(request):
                 expected=expected,
                 obtained=obtained,
                 diff=diff,
-                help_difficulty=help_difficulty
+                help_difficulty=help_difficulty,
+                language=language
             )
 
             # Criar nova sessão de chat e guardar no dicionário
@@ -308,7 +311,12 @@ def gemini_api(request):
             test.gemini_responses.append({
                 "user_input": "Primeira interação",
                 "response": response.text.encode('utf-8').decode('utf-8'),
-                "timestamp": timezone.now().isoformat()
+                "timestamp": timezone.now().isoformat(),
+                "user": {
+                    "id": request.user.id,
+                    "username": request.user.username,
+                    "email": request.user.email
+                }
             })
             test.save()
             
@@ -320,7 +328,12 @@ def gemini_api(request):
             contest.gemini_responses[str(test.id)].append({
                 "user_input": "Primeira interação",
                 "response": response.text.encode('utf-8').decode('utf-8'),
-                "timestamp": timezone.now().isoformat()
+                "timestamp": timezone.now().isoformat(),
+                "user": {
+                    "id": request.user.id,
+                    "username": request.user.username,
+                    "email": request.user.email
+                }
             })
             contest.save()
             
@@ -350,7 +363,12 @@ def gemini_api(request):
                             "response": response.text.encode('utf-8').decode('utf-8'),
                             "timestamp": timezone.now().isoformat(),
                             "has_prohibited_words": True,
-                            "prohibited_words": found_words
+                            "prohibited_words": found_words,
+                            "user": {
+                                "id": request.user.id,
+                                "username": request.user.username,
+                                "email": request.user.email
+                            }
                         })
                         test.save()
 
@@ -364,7 +382,12 @@ def gemini_api(request):
                             "response": response.text.encode('utf-8').decode('utf-8'),
                             "timestamp": timezone.now().isoformat(),
                             "has_prohibited_words": True,
-                            "prohibited_words": found_words
+                            "prohibited_words": found_words,
+                            "user": {
+                                "id": request.user.id,
+                                "username": request.user.username,
+                                "email": request.user.email
+                            }
                         })
                         contest.save()
 
@@ -379,7 +402,12 @@ def gemini_api(request):
                     "user_input": user_input.encode('utf-8').decode('utf-8'),
                     "response": response.text.encode('utf-8').decode('utf-8'),
                     "timestamp": timezone.now().isoformat(),
-                    "has_prohibited_words": False
+                    "has_prohibited_words": False,
+                    "user": {
+                        "id": request.user.id,
+                        "username": request.user.username,
+                        "email": request.user.email
+                    }
                 })
                 test.save()
 
@@ -392,7 +420,12 @@ def gemini_api(request):
                     "user_input": user_input.encode('utf-8').decode('utf-8'),
                     "response": response.text.encode('utf-8').decode('utf-8'),
                     "timestamp": timezone.now().isoformat(),
-                    "has_prohibited_words": False
+                    "has_prohibited_words": False,
+                    "user": {
+                        "id": request.user.id,
+                        "username": request.user.username,
+                        "email": request.user.email
+                    }
                 })
                 contest.save()
                 
