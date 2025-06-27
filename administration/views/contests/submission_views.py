@@ -167,7 +167,6 @@ chat_sessions = {}  # dicionário de sessões por teste
 @require_http_methods(["POST"])
 def gemini_api(request):
     try:
-        #genai.configure(api_key="AIzaSyBl2ClPsRvuNputjqnglLmIsl0KiAGVnBM")
         #Obter a chave do Gemini do perfil do utilizador
         user_profile = request.user.profile
         if not user_profile.gemini_key:
