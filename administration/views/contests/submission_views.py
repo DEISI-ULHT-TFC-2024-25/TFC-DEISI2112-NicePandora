@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from functools import wraps
 import json
+import asyncio
 
 
 @superuser_only
@@ -229,10 +230,8 @@ def gemini_api(request):
                 student_code = "Erro ao ler o código do aluno"
 
         # Validar índice do teste
-        if test_index < 1 or test_index > len(results):
+        if test_index < 1:
             return JsonResponse({"error": "Índice de teste inválido"}, status=400)
-
-        r = results[test_index - 1]
 
         # Caso 1: Primeira interação (sem user_input)
         if not user_input:
@@ -434,27 +433,22 @@ def send_message_with_timeout(chat, message):
 
 def check_blacklisted_words(text, blacklist):
     """
-    Verifica se o texto contém palavras da blacklist.
-    
+    Verifica se o texto contém palavras da blacklist (apenas palavras inteiras).
     Args:
         text (str): Texto a ser verificado
         blacklist (str): String com palavras proibidas separadas por vírgula
-        
     Returns:
         list: Lista com as palavras proibidas encontradas no texto. Vazia se nenhuma palavra for encontrada.
     """
-    # Converter o texto e a blacklist para minúsculas para comparação case-insensitive
+    import re
     text_lower = text.lower()
-    blacklist_words = [word.strip().lower() for word in blacklist.split(',')]
-    
-    # Lista para armazenar as palavras proibidas encontradas
+    blacklist_words = [word.strip().lower() for word in blacklist.split(',') if word.strip()]
     found_words = []
-    
-    # Verificar cada palavra da blacklist
     for word in blacklist_words:
-        if word and word in text_lower:
+        # Usar regex para encontrar apenas palavras inteiras (\bword\b)
+        pattern = r'\\b' + re.escape(word) + r'\\b'
+        if re.search(pattern, text_lower):
             found_words.append(word)
-    
     return found_words
 
 @csrf_exempt

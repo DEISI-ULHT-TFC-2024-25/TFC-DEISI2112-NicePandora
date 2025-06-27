@@ -457,7 +457,7 @@
         
         // Envia requisição inicial para o Gemini
         console.log('Enviando requisição inicial para o Gemini'); // Debug log
-        fetch("{% url 'gemini_api' %}", {
+        fetch("{% url 'gemini_api_admin' %}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -670,7 +670,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
         // Envia para a API
-        fetch("{% url 'gemini_api' %}", {
+        fetch("{% url 'gemini_api_admin' %}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -774,7 +774,7 @@
     // Função para abrir o modal de avaliação
     function openRatingModal(contestId) {
         // Verifica se o usuário já avaliou este contest
-        fetch("{% url 'submit_rating' %}", {
+        fetch("{% url 'submit_rating_admin' %}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -822,7 +822,7 @@
         submitButton.disabled = true;
         submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
     
-        fetch("{% url 'submit_rating' %}", {
+        fetch("{% url 'submit_rating_admin' %}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

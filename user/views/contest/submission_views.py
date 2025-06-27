@@ -198,18 +198,14 @@ chat_sessions = {}  # dicionário de sessões por teste
 @require_http_methods(["POST"])
 def gemini_api(request):
     try:
-        #genai.configure(api_key="AIzaSyBl2ClPsRvuNputjqnglLmIsl0KiAGVnBM")
-        #Obter a chave do Gemini do perfil do utilizador
         user_profile = request.user.profile
         if not user_profile.gemini_key:
             return JsonResponse({
                 "error": "É necessário configurar a chave do Gemini no perfil para utilizar esta funcionalidade. Por favor, acede à secção do Perfil e adiciona a chave."
             }, status=400)
 
-        #Configurar o Gemini com a chave do utilizador
         genai.configure(api_key=user_profile.gemini_key)
 
-        # Criar o modelo Gemini
         generation_config = {
             "temperature": 1,
             "top_p": 0.95,
@@ -261,14 +257,11 @@ def gemini_api(request):
                 student_code = "Erro ao ler o código do aluno"
 
         # Validar índice do teste
-        if test_index < 1 or test_index > len(results):
+        if test_index < 1:
             return JsonResponse({"error": "Índice de teste inválido"}, status=400)
-
-        r = results[test_index - 1]
 
         # Caso 1: Primeira interação (sem user_input)
         if not user_input:
-            # Obter informações do exercício e teste
             exercise_description = contest.getDescription()
             test_description = r.test.description
             reference_code = contest.reference_code
@@ -286,7 +279,6 @@ def gemini_api(request):
             obtained = obtained_result.replace('\u000A', '').strip()
             help_difficulty = r.test.help_difficulty
 
-            # Criar prompt inicial usando a nova função
             prompt = create_gemini_prompt(
                 exercise_description=exercise_description,
                 test_description=test_description,
@@ -515,27 +507,22 @@ def download_submission(request, contest_id, submission_id):
 
 def check_blacklisted_words(text, blacklist):
     """
-    Verifica se o texto contém palavras da blacklist.
-    
+    Verifica se o texto contém palavras da blacklist (apenas palavras inteiras).
     Args:
         text (str): Texto a ser verificado
         blacklist (str): String com palavras proibidas separadas por vírgula
-        
     Returns:
         list: Lista com as palavras proibidas encontradas no texto. Vazia se nenhuma palavra for encontrada.
     """
-    # Converter o texto e a blacklist para minúsculas para comparação case-insensitive
+    import re
     text_lower = text.lower()
-    blacklist_words = [word.strip().lower() for word in blacklist.split(',')]
-    
-    # Lista para armazenar as palavras proibidas encontradas
+    blacklist_words = [word.strip().lower() for word in blacklist.split(',') if word.strip()]
     found_words = []
-    
-    # Verificar cada palavra da blacklist
     for word in blacklist_words:
-        if word and word in text_lower:
+        # Usar regex para encontrar apenas palavras inteiras (\bword\b)
+        pattern = r'\b' + re.escape(word) + r'\b'
+        if re.search(pattern, text_lower):
             found_words.append(word)
-    
     return found_words
 
 @csrf_exempt

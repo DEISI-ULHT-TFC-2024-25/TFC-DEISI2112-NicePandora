@@ -1,6 +1,7 @@
 /*
- * cifrex.c - versão com erros propositados
- * Para testar modelos de ajuda com IA
+ * cifrex.c
+ * Authors: Pedro Arroz Serra & Hugo Castro
+ * Fixes: Francisco & ChatGPT (2025)
  */
 
 #include <stdio.h>
@@ -158,8 +159,8 @@ char *decrypt(char *s, const unsigned int length, int it) {
         return s;
 
     k = length / 2;
-    // Erro: REMOVIDO o ajuste para comprimentos ímpares
-    // if (it % 2 && length % 2) k++;
+    if (it % 2 && length % 2)
+        k++;
 
     n = length - k;
 
@@ -177,8 +178,12 @@ char *rot(char *s, int n, unsigned int length) {
         c = toupper(s[i]);
 
         if (isdigit(c)) {
-            h = (c - '0' + n); // Erro: falta % NCHARS, pode dar overflow
-            s[i] = chars[h];   // Se h >= NCHARS dá lixo
+            if (n >= 0)
+                h = (c - '0' + n) % NCHARS;
+            else
+                h = ((c - '0' + n) % NCHARS + NCHARS) % NCHARS;
+
+            s[i] = chars[h];
             continue;
         }
 
@@ -197,14 +202,17 @@ char *rot(char *s, int n, unsigned int length) {
 }
 
 char *encript_trans(char *str, int cols) {
-    int len, lines, i, l, c, t_lines, t_cols;
+    int padding, len, lines, i, l, c, t_lines, t_cols;
     char str_aux[2 * TXTSZ + 2];
 
     len = str_len(str);
+    padding = cols - len % cols;
     lines = len % cols == 0 ? len / cols : len / cols + 1;
 
-    // ERRO: não faz padding se não for múltiplo
-    // -> Isso vai gerar lixo nas últimas colunas
+    // Adiciona espaços no final se necessário
+    for (i = 0; i < (padding % cols); i++)
+        str[len + i] = ' ';
+    str[len + i] = '\0';
 
     str_cpy(str_aux, str);
 
@@ -217,7 +225,6 @@ char *encript_trans(char *str, int cols) {
             i++;
         }
     }
-    str[c + (l-1) * t_cols] = '\0'; // Tentativa incorreta de finalizar
 
     return str;
 }
