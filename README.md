@@ -26,18 +26,18 @@ Caso a IA gere uma resposta contendo palavras proibidas, essa resposta não é a
 
 Todo o histórico das interações com a IA é guardado:
 
-Por Teste e Por Submissão.
+- Por Teste e Por Submissão.
 
-Inclui data, hora, input do aluno, resposta da IA, e se a resposta violou ou não a blacklist.
+- Inclui data, hora, input do aluno, resposta da IA, e se a resposta violou ou não a blacklist.
 
 O professor pode visualizar e exportar todas as interações, além de aceder a estatísticas sobre o número de interações e a percentagem de respostas bloqueadas.
 
 ## ⭐ Avaliação da IA
 Após a primeira utilização da IA num exercício, o aluno é convidado a avaliar a qualidade da ajuda recebida:
 
-Avaliação de 1 a 5 estrelas.
+- Avaliação de 1 a 5 estrelas.
 
-Comentário opcional.
+- Comentário.
 
 As avaliações ficam visíveis na dashboard administrativa, permitindo monitorizar a qualidade percebida da IA.
 
