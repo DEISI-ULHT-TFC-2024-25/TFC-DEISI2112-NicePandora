@@ -11,11 +11,11 @@ Este botão abre uma janela de chat interativa onde o aluno pode conversar com a
 
 - A descrição do exercício.
 
-O código correto de referência (sem nunca ser mostrado ao aluno).
+- O código correto de referência (sem nunca ser mostrado ao aluno).
 
-O código submetido pelo aluno.
+- O código submetido pelo aluno.
 
-O input, o output esperado, o output obtido e a diferença entre ambos.
+- O input, o output esperado, o output obtido e a diferença entre ambos.
 
 Com base nestes dados, a IA gera dicas ajustadas ao nível de dificuldade definido pelo professor, sem fornecer diretamente a solução.
 
@@ -47,23 +47,23 @@ Cada utilizador deve configurar a sua própria API Key do Gemini, diretamente no
 Isso garante sustentabilidade no uso dos recursos e controlo dos custos associados.
 
 ## ⚙️ Fluxo de Funcionamento
-O aluno submete o código e verifica o resultado.
+1. O aluno submete o código e verifica o resultado.
 
-Se algum teste falhar, o botão "Help" aparece.
+2. Se algum teste falhar, o botão "Help" aparece.
 
-Ao clicar, abre-se uma janela de chat que comunica diretamente com o Gemini, passando um prompt estruturado com regras pedagógicas.
+3. Ao clicar, abre-se uma janela de chat que comunica diretamente com o Gemini, passando um prompt estruturado com regras pedagógicas.
 
-O aluno pode fazer perguntas adicionais durante a mesma sessão de chat.
+4. O aluno pode fazer perguntas adicionais durante a mesma sessão de chat.
 
 Toda a conversa é armazenada para controlo docente e futura análise.
 
 ## 📊 Painel Administrativo
 Visualização detalhada de todas as interações dos alunos com a IA.
 
-Estatísticas por teste, incluindo:
+- Estatísticas por teste, incluindo:
 
-Número de interações.
+- Número de interações.
 
-Respostas bloqueadas pela blacklist.
+- Respostas bloqueadas pela blacklist.
 
-Opção de download de todos os dados em formato JSON.
+- Opção de download de todos os dados em formato JSON.
