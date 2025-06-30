@@ -1,3 +1,5 @@
+#NicePandora
+
 Esta versão do Pandora, o NicePandora, introduz um sistema de Inteligência Artificial (IA), através da API Gemini (Google), que fornece feedback pedagógico contextualizado aos alunos sobre os erros no seu código.
 
 🚀 Como Funciona a Integração com IA
