@@ -9,7 +9,7 @@ Este botão abre uma janela de chat interativa onde o aluno pode conversar com a
 
 ## O Gemini analisa:
 
-A descrição do exercício.
+- A descrição do exercício.
 
 O código correto de referência (sem nunca ser mostrado ao aluno).
 
