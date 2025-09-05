@@ -1,0 +1,179 @@
+<style>
+.chat-message {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.chat-user-message {
+    background-color: #007bff;
+    color: white;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: inline-block;
+    max-width: 80%;
+    width: fit-content;
+    border: none;
+}
+
+.chat-user-message .chat-message {
+    background-color: transparent;
+    color: white;
+}
+
+.chat-user {
+    background-color: #4E73DF; /* Azul */
+    color: white;
+    border-bottom-right-radius: 6px;
+    margin-left: auto;
+    text-align: left;
+    margin-right: 8px; /* espaço à direita */
+}
+
+.chat-ai {
+    background-color: #28a745; /* Verde */
+    color: white;
+    border-bottom-left-radius: 6px;
+    margin-right: auto;
+    text-align: left;
+    margin-left: 8px; /* espaço à esquerda */
+}
+
+/* Chat container */
+.chat-window {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo do typing indicator */
+.typing-indicator {
+    display: inline-block;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 18px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+    max-width: 40%;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin: 0 2px;
+    background-color: #155724;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% { opacity: 0.2; }
+    20% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+.gemini-message {
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+    max-width: 80%;
+}
+
+.gemini-text {
+    background-color: transparent;
+    display: inline-block;
+    width: 100%;
+}
+
+.gemini-message strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Estilo para o indicador de digitação */
+.typing-indicator {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #cce5cc;
+    border-radius: 12px;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #666;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.gemini-text {
+    background-color: transparent;
+    text-decoration-skip-ink: none;
+    text-decoration-thickness: 1px;
+    -webkit-text-fill-color: inherit;
+}
+.gemini-text * {
+    background-color: transparent;
+    -webkit-text-fill-color: inherit;
+}
+.gemini-text::selection {
+    background-color: #e6f3ff;
+}
+.gemini-text *::selection {
+    background-color: #e6f3ff;
+}
+.gemini-text del {
+    background-color: #ffe6e6;
+    text-decoration: line-through;
+}
+.gemini-text ins {
+    background-color: #e6ffe6;
+    text-decoration: none;
+}
+.gemini-text span {
+    display: inline;
+}
+
+.rating {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.rating i {
+    margin: 0 5px;
+}
+
+.rating i.active {
+    color: #ffc107;
+}
+
+.rating i:hover {
+    color: #ffc107;
+}
+</style>

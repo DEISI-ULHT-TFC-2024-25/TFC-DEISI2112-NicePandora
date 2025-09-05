@@ -72,12 +72,12 @@ def get_contest_outs_files_path(instance, filename):
 
 
 
-class Profile(models.Model):
+ Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 	number = models.IntegerField(null=True, blank=True)
-	gprd = models.BooleanField(null=True, default=True, blank=True)
+	gprd = models.BooleanField(nulclassl=True, default=True, blank=True)
 	valid = models.BooleanField(null=False, default=False, blank=False)
-    # gemini_key = models.CharField(max_length=255, null=True, blank=True)  # Novo campo opcional
+	gemini_key = models.CharField(max_length=255, null=True, blank=True)
 
 
 	def __str__(self):  # __unicode__ for Python 2
@@ -155,6 +155,11 @@ class Contest(models.Model):
 	max_submitions = models.PositiveIntegerField(default=0)
 	language = models.CharField(max_length=512, null=False, blank=False, choices=[('C', 'C'), ('Java', 'Java'), ('Python', 'Python')])
 	archived = models.BooleanField(null=False, default=False, blank=False)
+	
+	ai_ratings = models.JSONField(default=dict, blank=True)  # Armazena {user_id: {"rating": 1-5, "comment": "texto"}}
+	ai_rated_by = models.ManyToManyField(User, related_name='rated_contests', blank=True)  # Usuários que já avaliaram
+	blacklist = models.TextField(null=True, blank=True, help_text="Palavras proibidas separadas por vírgula (ex: palavra1,palavra2,palavra3)")
+	gemini_responses = models.JSONField(default=dict, blank=True)  # Armazena {test_id: [{"user_input": "...", "response": "...", "timestamp": "...", "has_prohibited_words": true/false, "prohibited_words": ["palavra1", "palavra2", "palavra3"], "user": {"id": "...", "username": "...", "email": "..."}}]}
 
 	@classmethod
 	def getContestsForUser(cls, request):
@@ -270,6 +275,9 @@ class Contest(models.Model):
 		thirty_days_ago = datetime.today() - timedelta(days=30)
 		return self.attempt_set.filter(date__gt=thirty_days_ago)
 
+	def getDescription(self):
+		return self.description	
+
 
 
 class Test(models.Model):
@@ -285,8 +293,15 @@ class Test(models.Model):
 	view_input = models.BooleanField(null=False, default=True)
 	view_args = models.BooleanField(null=False, default=True)
 	view_error = models.BooleanField(null=False, default=True)
-
-
+	
+	description = models.TextField(null=True, blank=True)  # Novo campo opcional
+	help_ai = models.BooleanField(null=False, default=True)  # Campo para controlar se o teste tem ajuda AI
+	help_difficulty = models.CharField(
+		max_length=10,
+		choices=[('Fácil', 'Fácil'), ('Médio', 'Médio'), ('Difícil', 'Difícil')],
+		default='Médio'
+	) 
+	gemini_responses = models.JSONField(default=list, blank=True)  # Lista de respostas do Gemini com timestamps
 
 	#type_of_feedback = models.PositiveIntegerField(default=1, null=False, blank=False)
 

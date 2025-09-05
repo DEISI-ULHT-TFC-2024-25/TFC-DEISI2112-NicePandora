@@ -238,10 +238,12 @@ class ProfileModelForm(forms.ModelForm):
     number = forms.IntegerField(required=True, label='Student Number')
     gprd = forms.BooleanField(required=True, initial=False,
                               label='Agree to share my information (name, email, number, username, grade) with the authors and other users of this application')
+    gemini_key = forms.CharField(required=False, label='Gemini API Key', 
+                               help_text='Optional: Enter your Gemini API key if you want to use AI features')
 
     class Meta:
         model = Profile
-        fields = ['number', 'gprd']
+        fields = ['number', 'gprd', 'gemini_key']
 
 
 class AdminUserModelForm(forms.ModelForm):
@@ -265,7 +267,7 @@ class AdminUserModelForm(forms.ModelForm):
 class AdminUserProfileModelForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['number', 'gprd', 'valid']
+        fields = ['number', 'gprd', 'valid', 'gemini_key']
 
     def submit(self):
         if not self.is_valid():

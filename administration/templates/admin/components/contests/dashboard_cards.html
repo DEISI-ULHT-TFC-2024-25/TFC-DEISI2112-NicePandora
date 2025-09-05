@@ -152,7 +152,29 @@
                     <i class="fas fa-download"></i>
                 </span>
                 <span class="text">DownloadContestInfo</span>
-            </a>            
+            </a>
+            {% if admin_contests_dashboard_cards.contest.ai_ratings %}
+                <button type="button" class="btn btn-primary btn-icon-split btn-sm w-md-100 mb-3 mb-lg-0" data-toggle="modal" data-target="#modal-ratings">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-star"></i>
+                    </span>
+                    <span class="text">AI Ratings</span>
+                </button>
+            {% endif %}
+            {% if admin_contests_dashboard_cards.contest.gemini_responses %}
+                <a href="{% url 'manager_contests_download_gemini_responses' admin_contests_dashboard_cards.contest.id %}" class="btn btn-primary btn-icon-split btn-sm w-md-100 mb-3 mb-lg-0">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-download"></i>
+                    </span>
+                    <span class="text">DownloadAIResponses</span>
+                </a>
+                <button type="button" class="btn btn-primary btn-icon-split btn-sm w-md-100 mb-3 mb-lg-0" data-toggle="modal" data-target="#geminiStatsModal">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-chart-bar"></i>
+                    </span>
+                    <span class="text">AI Statistics</span>
+                </button>
+            {% endif %}
         </div>
     </div>
 
@@ -190,5 +212,287 @@
     </div>
 
 </div>
+
+<!-- Modal de Avaliações -->
+<div class="modal fade" id="modal-ratings" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">AI Ratings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user_id, rating_data in admin_contests_dashboard_cards.contest.ai_ratings.items %}
+                                <tr>
+                                    <td>{{ rating_data.user_name }}</td>
+                                    <td>
+                                        {% for i in "12345" %}
+                                            <i class="fas fa-star {% if forloop.counter <= rating_data.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ rating_data.comment }}</td>
+                                    <td>{{ rating_data.date|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Estatísticas do Gemini -->
+<div class="modal fade" id="geminiStatsModal" tabindex="-1" role="dialog" aria-labelledby="geminiStatsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="geminiStatsModalLabel">Gemini Responses</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="custom-control custom-switch mb-3">
+                    <input type="checkbox" class="custom-control-input" id="showProhibitedToggle">
+                    <label class="custom-control-label" for="showProhibitedToggle">Prohibited Responses</label>
+                </div>
+                <div class="chart-bar">
+                    <canvas id="geminiResponsesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Detalhes das Respostas -->
+<div class="modal fade" id="responseDetailsModal" tabindex="-1" role="dialog" aria-labelledby="responseDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseDetailsModalLabel">Responses Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Utilizador</th>
+                                <th>Input</th>
+                                <th>Resposta</th>
+                                <th>Palavras Proibidas</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responseDetailsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if admin_contests_dashboard_cards.contest.gemini_responses %}
+    {{ admin_contests_dashboard_cards.contest.gemini_responses|json_script:"gemini-data" }}
+{% endif %}
+
+<script>
+$(document).ready(function() {
+    var myChart = null;
+    var currentTestId = null;
+    var showOnlyProhibited = false;
+    
+    function showResponseDetails(testId) {
+        currentTestId = testId;
+        var geminiData = JSON.parse(document.getElementById('gemini-data').textContent);
+        var responses = geminiData[testId];
+        
+        // Filtrar respostas se necessário
+        if (showOnlyProhibited) {
+            responses = responses.filter(function(response) {
+                return response.prohibited_words && response.prohibited_words.length > 0;
+            });
+        }
+        
+        // Limpar e preencher a tabela
+        var tbody = $('#responseDetailsBody');
+        tbody.empty();
+        
+        responses.forEach(function(response) {
+            var row = $('<tr>');
+            
+            // Adicionar classe de alerta se tiver palavras proibidas
+            if (response.prohibited_words && response.prohibited_words.length > 0) {
+                row.addClass('table-danger');
+            }
+            
+            row.append($('<td>').text(response.user ? response.user.username : ''));
+            row.append($('<td>').text(response.user_input || ''));
+            row.append($('<td>').text(response.response || ''));
+            row.append($('<td>').text(response.prohibited_words ? response.prohibited_words.join(', ') : ''));
+            row.append($('<td>').text(new Date(response.timestamp).toLocaleString()));
+            
+            tbody.append(row);
+        });
+        
+        // Atualizar título do modal
+        $('#responseDetailsModalLabel').text(
+            'Responses Details - Test ' + testId + 
+            (showOnlyProhibited ? ' (Prohibited Only)' : '')
+        );
+        
+        // Mostrar o modal
+        $('#responseDetailsModal').modal('show');
+    }
+    
+    function updateChart(showProhibited) {
+        showOnlyProhibited = showProhibited;
+        try {
+            // Limpar o canvas antes de criar um novo gráfico
+            $('#geminiResponsesChart').remove();
+            $('.chart-bar').append('<canvas id="geminiResponsesChart"></canvas>');
+            
+            // Obter os dados do Gemini do elemento script
+            var geminiData = JSON.parse(document.getElementById('gemini-data').textContent);
+            
+            if (!geminiData || Object.keys(geminiData).length === 0) {
+                console.error('Nenhum dado do Gemini disponível');
+                return;
+            }
+            
+            // Preparar dados para o gráfico
+            var testIds = Object.keys(geminiData);
+            var responseCounts = [];
+            var backgroundColor = [];
+            var labels = [];
+            
+            testIds.forEach(function(testId) {
+                var responses = geminiData[testId];
+                var totalResponses = responses.length;
+                var prohibitedCount = responses.filter(function(response) {
+                    return response.prohibited_words && response.prohibited_words.length > 0;
+                }).length;
+                
+                // Calcular a porcentagem de respostas proibidas
+                var prohibitedPercentage = totalResponses > 0 ? 
+                    Math.round((prohibitedCount / totalResponses) * 100) : 0;
+                
+                // Criar o label com o ID do teste e a porcentagem
+                var label = 'Test ' + testId;
+                if (showOnlyProhibited) {
+                    label += '\n(' + prohibitedPercentage + '% prohibited)';
+                }
+                labels.push(label);
+                
+                if (showOnlyProhibited) {
+                    responseCounts.push(prohibitedCount);
+                    backgroundColor.push('rgba(220, 53, 69, 0.5)'); // Vermelho para respostas proibidas
+                } else {
+                    responseCounts.push(totalResponses);
+                    backgroundColor.push('rgba(54, 162, 235, 0.5)'); // Azul para todas as respostas
+                }
+            });
+            
+            // Criar o gráfico
+            var ctx = document.getElementById('geminiResponsesChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: showOnlyProhibited ? 'Number of Prohibited Responses' : 'Number of Responses',
+                        data: responseCounts,
+                        backgroundColor: backgroundColor,
+                        borderColor: showOnlyProhibited ? 'rgba(220, 53, 69, 1)' : 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                        xAxes: [{
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            maxBarThickness: 25,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.split('\n');
+                                }
+                            }
+                        }]
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: showOnlyProhibited ? 'Number of Prohibited Responses by Test' : 'Number of Gemini Responses by Test'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    onClick: function(evt, elements) {
+                        if (elements && elements.length > 0) {
+                            var index = elements[0]._index;
+                            showResponseDetails(testIds[index]);
+                        }
+                    },
+                    onHover: function(evt, elements) {
+                        evt.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Erro ao criar o gráfico:', error);
+        }
+    }
+    
+    $('#geminiStatsModal').on('show.bs.modal', function () {
+        updateChart(false); // Mostrar todas as respostas inicialmente
+    });
+    
+    $('#geminiStatsModal').on('hidden.bs.modal', function () {
+        // Resetar o toggle quando o modal é fechado
+        $('#showProhibitedToggle').prop('checked', false);
+        showOnlyProhibited = false;
+    });
+    
+    $('#showProhibitedToggle').on('change', function() {
+        updateChart(this.checked);
+    });
+});
+</script>
 
 
